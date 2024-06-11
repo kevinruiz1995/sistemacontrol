@@ -21,7 +21,7 @@ class Genero(ModeloBase):
         return u'%s' % self.nombre
 
 class Persona(ModeloBase):
-    usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     nombres = models.CharField(max_length=700, blank=True, null=True, verbose_name=u"Nombres")
     apellido1 = models.CharField(max_length=700, blank=True, null=True, verbose_name=u"Primer apellido")
     apellido2 = models.CharField(max_length=700, blank=True, null=True, verbose_name=u"Segundo apellido")

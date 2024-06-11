@@ -7,6 +7,7 @@ class CategoriaModulo(ModeloBase):
     nombre = models.CharField(verbose_name="Nombre", max_length=100,unique=True)
     descripcion = models.TextField(verbose_name="Descripción",max_length=300,blank=True,null=True)
     orden = models.IntegerField(default=0, verbose_name=u'Orden')
+    icono = models.CharField(default='', max_length=100, verbose_name=u'Icono')
     visible = models.BooleanField(default=True, verbose_name=u'¿Está Visible?')
 
     class Meta:
@@ -37,6 +38,7 @@ class Modulo(ModeloBase):
     orden = models.IntegerField(default=0, verbose_name=u'Orden')
     visible = models.BooleanField(default=True, verbose_name=u'¿Está Visible?')
     es_modulo_padre = models.BooleanField(default=False, verbose_name=u'¿Es módulo padre?')
+    activo = models.BooleanField(default=True, verbose_name="¿Módulo activo?")
 
     def submodulos(self):
         return Modulo.objects.filter(modulo_padre=self, status=True, visible=True).order_by('orden')

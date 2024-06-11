@@ -2,53 +2,80 @@ import datetime
 from datetime import datetime, date
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, JsonResponse
+from baseapp.models import Persona
+from baseapp.funciones import add_data_aplication
+from system.models import Modulo, AccesoModulo, CategoriaModulo
 from baseapp.models import Persona
 from administrativo.models import PersonaPerfil, PlantillaPersona, JornadaEmpleado, DetalleRegistroEntradaSalida
 
 
 @login_required # Este decorador asegura que solo los usuarios autenticados puedan acceder a esta vista
 def home(request):
-    try:
-        data = {}
-        data['request'] = request
-        #DECLARACIÓN DE VARIABLES
-        empleados_sin_jornadas = False
-        fecha_actual = datetime.now().date()
+    global ex
+    data = {}
+    add_data_aplication(request, data)
+    usuario_logeado = request.user
+    if 'tipoperfil' in request.session:
+        tipoperfil = request.session['tipoperfil']
+    else:
+        tipoperfil = usuario_logeado.groups.all()
+    consulta_logeo = Persona.objects.filter(usuario=usuario_logeado, status=True)
+    if consulta_logeo.exists():
+        persona_logeado = consulta_logeo.first()
+    else:
+        persona_logeado = 'SUPERUSUARIO'
 
-        #CONSULTA CUÁLES SON LAS ÚLTIMAS 5 MARCACIONES QUE SE REALIZARON
-        ultimas_marcaciones = DetalleRegistroEntradaSalida.objects.filter(status=True, fecha_hora__date=fecha_actual).order_by('dia__empleado').distinct('dia__empleado')[:5]
+    if request.method == 'POST':
+        if 'peticion' in request.POST:
+            peticion = request.POST['peticion']
 
-        #CONSULTA A LOS EMPLEADOS ACTIVOS Y CUÁLES DE ELLOS NO TIENEN JORNADAS LABORALES ASIGNADAS
-        empleados = PlantillaPersona.objects.filter(status=True, activo=True)
-        for empleado in empleados:
-            jornada = JornadaEmpleado.objects.filter(status=True, empleado=empleado)
-            if not jornada.exists():
-                empleados_sin_jornadas = True
-                break
+    else:
+        if 'peticion' in request.GET:
+            peticion = request.GET['peticion']
 
-        is_administrativo = False
+            if peticion == 'cambioperfil':
+                try:
+                    data['titulo'] = 'Menú principal'
+                    mis_perfiles = None
+                    # obtener perfiles
 
-        usuario = request.user
-        if usuario.id:
-            persona = Persona.objects.filter(status=True, usuario=usuario)
-            if persona.exists():
-                persona = persona.first()
-                perfil = PersonaPerfil.objects.filter(status=True, persona=persona)
-                if perfil.exists():
-                    perfil = perfil.first()
-                    if perfil.is_administrador:
-                        is_administrativo = True
+                    mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=persona_logeado)
+                    data['mis_perfiles'] = mis_perfiles
+                    data['tipoperfil'] = request.GET['tipoperfil']
+                    act_data_aplication(request, data)
+                    tipoperfil = request.session['tipoperfil']
 
-        # Luego, puedes pasar datos a tu template si es necesario
-        context = {
-            'page_titulo': 'Inicio',
-            'titulo':'Inicio',
-            'is_administrativo':is_administrativo,
-            'empleados_sin_jornadas':empleados_sin_jornadas,
-            'ultimas_marcaciones':ultimas_marcaciones,
-        }
+                    menu = AccesoModulo.objects.values_list('modulo_id').filter(status=True, activo=True,
+                                                                                grupo_id=tipoperfil)
+                    modulos = Modulo.objects.filter(status=True, activo=True, pk__in=menu)
+                    data['persona_logeado'] = persona_logeado
+                    data['modulos'] = modulos
+                    return HttpResponseRedirect("/")
+                except Exception as ex:
+                    print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 
-        # Renderiza el template y pasa el contexto
-        return render(request, 'panel.html', context)
-    except Exception as ex:
-        pass
+        else:
+            try:
+                data['titulo'] = 'Menú principal'
+                mis_perfiles = None
+                # obtener perfiles
+                if not 'CAM' == persona_logeado:
+                    mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=persona_logeado)
+                    data['mis_perfiles'] = mis_perfiles
+
+                # obtener modulos
+                if usuario_logeado.is_superuser:
+                    modulos = Modulo.objects.filter(status=True, activo=True)
+
+                else:
+                    menu = AccesoModulo.objects.values_list('modulo_id').filter(status=True, activo=True,
+                                                                                grupo__id=tipoperfil)
+                    modulos = Modulo.objects.filter(status=True, activo=True, pk__in=menu)
+                data['categoriasmodulo'] = CategoriaModulo.objects.filter(status=True)
+                data['tg'] = tipoperfil
+                data['persona_logeado'] = persona_logeado
+                data['modulos'] = modulos
+                return render(request, "panel.html", data)
+            except Exception as ex:
+                print('Error on line {}'.format(ex.exc_info()[-1].tb_lineno))
