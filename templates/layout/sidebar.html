@@ -1,0 +1,70 @@
+{% load static %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $("#nav-toggle").trigger("click");
+    })
+</script>
+<nav class="navbar-vertical navbar navbar-dark bg-dark">
+    <div class="vh-100" data-simplebar>
+        <!-- Brand logo -->
+        <a class="navbar-brand" href="{% url 'home' %}">
+            SISTEMA
+        </a>
+        <!-- Navbar nav -->
+        <ul class="navbar-nav flex-column" id="sideNavbar">
+            <!-- Nav item -->
+            <li class="nav-item">
+                <div class="nav-divider"></div>
+            </li>
+            {% for categoria in categorias %}
+                <!-- Nav item -->
+                <li class="nav-item">
+                    <div class="navbar-heading">{{ categoria.nombre }}</div>
+                </li>
+                {% for foo in categoria.modulos %}
+                    {% if foo.id in modulos %}
+                        {% if foo.es_modulo_padre %}
+                            <li class="nav-item">
+                                <a class="nav-link  " href="Javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#navDashboard_{{ foo.pk }}" aria-expanded="false" aria-controls="navDashboard_{{ foo.pk }}">
+                                    <i class="nav-icon fe {{ foo.icono }} me-2"></i> {{ foo.nombre }}
+                                </a>
+                                <div id="navDashboard_{{ foo.pk }}" class="collapse  show " data-bs-parent="#sideNavbar">
+                                    {% for foo in foo.submodulos %}
+                                        <ul class="nav flex-column">
+                                            <li class="nav-item ">
+                                                <a class="nav-link " href="{{foo.url_name}}">
+                                                    {{ foo.nombre }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    {% endfor %}
+
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ foo.url_name }}">
+                                    <i class="nav-icon fe {{ foo.icono }} me-2 fe-"></i> {{ foo.nombre }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    <!-- Nav item -->
+                {% endfor %}
+
+            {% empty %}
+                <div class="alert alert-warning alert-outline alert-dismissible m-3" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="alert-icon">
+                        <i class="fa fa-fw fa-bell"></i>
+                    </div>
+                    <div class="alert-message">
+                        <strong>No tiene configurado el acceso a módulos.</strong>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+        </ul>
+    </div>
+</nav>

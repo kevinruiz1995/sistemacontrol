@@ -11,6 +11,7 @@ from authentication.forms import CustomUserCreationForm, CustomLoginForm
 from authentication.models import CustomUser
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from sistemacontrol import settings
 
 def extraer_landmarks(imagen):
     # Inicializa el detector de rostros de dlib (HOG)
@@ -117,7 +118,7 @@ def custom_login(request):
                         next_url = request.GET.get('next', '')  # Obtener la URL de redirección desde el parámetro 'next'
                         if next_url:
                             return HttpResponseRedirect(next_url)  # Redirigir a la URL especificada
-                        return redirect('home')  # Redirigir al usuario a la página de inicio después del inicio de sesión
+                        return JsonResponse({"success": True, "url": settings.LOGIN_REDIRECT_URL})  # Redirigir al usuario a la página de inicio después del inicio de sesión
                     else:
                         return JsonResponse({"success": False, "mensaje": 'Tu cuenta está desactivada. Por favor, contacta al administrador.'})
                 else:

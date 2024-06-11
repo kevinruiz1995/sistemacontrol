@@ -1,0 +1,97 @@
+{% extends "app_base_generic.html" %}
+{% load funciones_especiales %}
+{% block head %}
+{% endblock %}
+{% block opciones %}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Card -->
+            <div class="card mb-4 ">
+                <!-- Card Header -->
+                <div class="card-header border-bottom-0">
+                    <!-- Form -->
+                    <form class="d-flex align-items-center " id="id_filtro_form" method="GET"
+                          action="{% url 'administrativo:listar_marcacionesempleado' subobjeto.id %}">
+                        <select class="selectpicker" data-width="60%" name="mes">
+                            <option selected disabled>Seleccione</option>
+                            {% for mes in meses %}
+                                <option value="{{ mes.id }}"
+                                        {% if mes_ == mes.id %}selected{% endif %}>{{ mes.mes }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary" style="margin-left: 10px">Buscar</button>
+                    </form>
+                </div>
+                <!-- Table -->
+                <div class="table-responsive border-0 overflow-y-hidden">
+                    <table class="table mb-0 text-nowrap">
+                        <thead class="table-light">
+                        <tr>
+                            <th class="border-0">Día</th>
+                            <th class="border-0">Jornada</th>
+
+                            {% for motivo in MOTIVO_MARCACION %}
+                                <th class="border-0" style="text-align: center">
+                                    {{ motivo.1 }}
+                                </th>
+                            {% endfor %}
+
+
+                            <th class="border-0"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for marcada in page_object %}
+                            <tr>
+                                <td class="align-middle border-bottom-0 ">
+                                    {{ marcada.fecha_hora|date:"l"|capfirst }}, {{ marcada.fecha_hora | date:"d" }}
+                                </td>
+                                <td class="align-middle border-bottom-0 ">
+                                    <a class="text-inherit">
+                                        <h5 class="mb-0 text-primary-hover">{{ marcada.jornada }}</h5>
+                                    </a>
+                                </td>
+                                {% for motivo in MOTIVO_MARCACION %}
+                                    {% with mismarcaciones=marcada|filtro:motivo.0|funcion:'mismarcaciones' %}
+                                        {% for registro in mismarcaciones %}
+                                            <td class="align-middle border-bottom-0" style="text-align: center">
+                                                {{ registro.fecha_hora|date:'H:i' }}
+                                                <br>
+                                                <a href="https://www.google.com/maps/search/?api=1&query={{ registro.ubicacion }}"
+                                                   target="_blank"
+                                                   title="Consultar ubicación de marcada">Ver ubicación</a>
+                                            </td>
+                                        {% empty %}
+                                            <td class="align-middle border-bottom-0" style="text-align: center">
+                                                ---
+                                            </td>
+                                        {% endfor %}
+                                    {% endwith %}
+                                {% endfor %}
+                                <td class="text-muted align-middle border-bottom-0 ">
+                                    <span class="dropdown dropstart">
+                                        <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button"
+                                           id="courseDropdown11"
+                                           data-bs-toggle="dropdown" data-bs-offset="-20,20" aria-expanded="false">
+                                          <i class="fe fe-more-vertical"></i>
+                                        </a>
+                                        <span class="dropdown-menu" aria-labelledby="courseDropdown11">
+                                        <span class="dropdown-header">Acciones</span>
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'paginador.html' %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+{% endblock %}

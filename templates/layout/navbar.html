@@ -1,0 +1,24 @@
+{% load static %}
+<div class="header">
+    <!-- navbar -->
+    <nav class="navbar-default navbar navbar-expand-lg">
+        <a id="nav-toggle" href="#">
+            <i class="fe fe-menu"></i>
+        </a>
+        <div class="ms-lg-3 d-none d-md-none d-lg-block">
+            <!-- Form -->
+{#            <form class="d-flex align-items-center">#}
+{#                <span class="position-absolute ps-3 search-icon">#}
+{#                        <i class="fe fe-search"></i>#}
+{#                    </span>#}
+{#                <input type="search" class="form-control form-control-sm ps-6" placeholder="Search Entire Dashboard"/>#}
+{#            </form>#}
+        </div>
+        <!--Navbar nav -->
+        <ul class="navbar-nav navbar-right-wrap ms-auto d-flex nav-top-wrap">
+            {% include 'layout/notificaciones.html' %}
+            <!-- List -->
+            {% include 'layout/perfil.html' %}
+        </ul>
+    </nav>
+</div>

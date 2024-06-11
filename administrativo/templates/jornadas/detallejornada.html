@@ -1,0 +1,158 @@
+{% extends "app_base_generic.html" %}
+{% load static %}
+{% load funciones_especiales %}
+{% block head %}
+    <script>
+
+
+        function activar_desactivar_perfil(id, tipo, estado) {
+            $.ajax({
+                url: "{% url 'administrativo:activar_desactivar_perfil' %}",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    pk: id,
+                    tipo: tipo,
+                    estado: estado,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        message_success_reload(data.message)
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function () {
+                    toast_error("Error en la solicitud AJAX.");
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% block opciones %}
+    <div class="col-xxl-10 col-xl-8 col-lg-6 col-md-12 col-12 mb-3 mb-lg-0">
+        <!-- heading -->
+        <a href="Javascript:void(0);" class="btn btn-primary mb-2 mb-lg-0" data-width="100%"
+           onclick="formulario_modal('{% url 'administrativo:crear_detallejornada' subobjeto.id %}','Adicionar nuevo registro')">Adicionar</a>
+    </div>
+    <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-12 pe-lg-2">
+
+    </div>
+    {#    <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-12 ps-lg-2">#}
+    {#        <!-- select -->#}
+    {#        <select class="selectpicker" data-width="100%">#}
+    {#            <option selected>Filter</option>#}
+    {#            <option value="Just my task">Just my task</option>#}
+    {#            <option value="Due this week">Due this week</option>#}
+    {#            <option value="Due next week">Due next week</option>#}
+    {#        </select>#}
+    {#    </div>#}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Card -->
+            <div class="card mb-4 ">
+                <!-- Card Header -->
+                <div class="card-header border-bottom-0">
+                    <!-- Form -->
+                    <form class="d-flex align-items-center " id="id_filtro_form" method="GET"
+                          action="{% url 'administrativo:listar_detallejornada' subobjeto.id %}">
+                        <span class="position-absolute ps-3 search-icon"><i class="fe fe-search"></i></span>
+                        <input type="search" name="search" class="form-control ps-6" value="{{ search|default:'' }}"
+                               placeholder="Filtro de búsqueda"/>
+                    </form>
+                </div>
+                <!-- Table -->
+                <div class="table-responsive border-0 overflow-y-hidden" style="padding-bottom:40px">
+                    <table class="table mb-0 text-nowrap">
+                        <thead class="table-light">
+                        <tr>
+                            <th class="border-0">Día</th>
+                            <th class="border-0" style="text-align: center">Comienza</th>
+                            <th class="border-0" style="text-align: center">Finaliza</th>
+                            <th class="border-0"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for detallejornada in page_object %}
+                            <tr>
+                                <td class="align-middle border-bottom-0 ">
+                                    <a class="text-inherit">
+                                        <h5 class="mb-0 text-primary-hover">{{ detallejornada }}</h5>
+                                    </a>
+                                </td>
+                                <td class="align-middle border-bottom-0 text-center">
+                                    {{ detallejornada.comienza }}
+                                    <br>
+                                    {% if detallejornada.motivo_entrada %}{{ detallejornada.get_motivo_entrada_display }}{% else %}---{% endif %}
+                                </td>
+                                <td class="align-middle border-bottom-0 text-center">
+                                    {{ detallejornada.finaliza }}
+                                    <br>
+                                    {% if detallejornada.motivo_salida %}{{ detallejornada.get_motivo_salida_display }}{% else %}---{% endif %}
+                                </td>
+                                <td class="text-muted align-middle border-bottom-0 ">
+                                    <span class="dropdown dropstart">
+                                        <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button"
+                                           id="courseDropdown11"
+                                           data-bs-toggle="dropdown" data-bs-offset="-20,20" aria-expanded="false">
+                                          <i class="fe fe-more-vertical"></i>
+                                        </a>
+                                        <span class="dropdown-menu" aria-labelledby="courseDropdown11">
+                                        <span class="dropdown-header">Acciones</span>
+                                            <a class="dropdown-item" href="Javascript:void(0);"
+                                               onclick="formulario_modal('{% url 'administrativo:editar_detallejornada' detallejornada.pk %}','Editar registro')"><i
+                                                    class="fe fe-edit dropdown-item-icon"></i>Editar</a>
+                                                <a class="dropdown-item" href="Javascript:void(0);"
+                                                   onclick="eliminar_con_ajax('{% url 'administrativo:eliminar_detallejornada' detallejornada.pk %}')"><i
+                                                        class="fe fe-trash dropdown-item-icon"></i>Eliminar</a>
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'paginador.html' %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        $('.actualizar_estado').on('change', function () {
+            // Obtiene los valores de 'idp' y 'activado' del elemento checkbox
+            var $checkbox = $(this);
+            var estadoInicial = $(this).prop('checked') ? false : true;
+            var idp = $(this).attr('idp');
+            var activado = this.checked;
+            var estado = activado ? "true" : "false";
+
+            $.ajax({
+                url: "{% url 'administrativo:actualizar_estado' %}",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    pk: idp,
+                    estado: estado,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        message_success_reload(data.message)
+                    } else {
+                        $checkbox.prop('checked', estadoInicial);
+                        alert(data.message);
+                    }
+                },
+                error: function () {
+                    $checkbox.prop('checked', estadoInicial);
+                    toast_error("Error en la solicitud AJAX.");
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

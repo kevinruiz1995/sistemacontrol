@@ -1,0 +1,194 @@
+{% extends "app_base_generic.html" %}
+{% block head %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        /* Estilos para el mapa */
+        #mapa {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+    <script>
+        {% if jornadaasignada %}
+            if ("geolocation" in navigator) {
+                // Obtener la ubicación del usuario
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    // Hacer algo con las coordenadas, como enviarlas al servidor
+                    // Puedes utilizar una solicitud AJAX para enviar las coordenadas al servidor
+
+                    // Ejemplo de solicitud AJAX con jQuery
+                    $.ajax({
+                        url: "{% url 'administrativo:validarRadio' %}", // Ruta de tu vista en el servidor
+                        method: "GET",
+                        data: {
+                            latitude: latitude,
+                            longitude: longitude
+                        },
+                        success: function (data) {
+                            if (data.cumple) {
+                                var formMarcacion = document.getElementById("formMarcacion");
+                                formMarcacion.style.visibility = "visible";
+                                var coordenadasubicacion = document.getElementById("coordenadasubicacion");
+                                coordenadasubicacion.value = latitude + ', ' + longitude;
+                            } else {
+                                var alertaMarcada = document.getElementById("alertaMarcada");
+                                alertaMarcada.style.visibility = "visible";
+                            }
+                        },
+                        error: function () {
+                            console.error("Error al enviar las coordenadas al servidor.");
+                        }
+                    });
+                }, function (error) {
+                    // En caso de error
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            console.log("El usuario denegó la solicitud de geolocalización.");
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            console.log("La información de ubicación no está disponible.");
+                            break;
+                        case error.TIMEOUT:
+                            console.log("Se agotó el tiempo para obtener la ubicación.");
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            console.log("Ocurrió un error desconocido al obtener la ubicación.");
+                            break;
+                    }
+                });
+            } else {
+                console.log("El navegador no admite la geolocalización.");
+            }
+        {% endif %}
+    </script>
+{% endblock %}
+{% block opciones %}
+    <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-12 pe-lg-2">
+
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <div class="mb-4" style="text-align: center;height: 100%;background: transparent;border-style: none;">
+            </div>
+            <div id="alertaMarcada" class="mb-4"
+                 style="text-align: center;height: 100%;background: transparent;border-style: none;visibility: hidden;{% if not jornadaasignada %}display: none{% endif %}">
+                <h3 style="color: orange">La marcación no se encuentra disponible</h3>
+            </div>
+
+            {% if not jornadaasignada %}
+                <div id="alertaJornada" class="mb-4"
+                     style="text-align: center;height: 100%;background: transparent;border-style: none;">
+                    <h3 style="color: orange">No permitido, jornada laboral no asignada</h3>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div id="formMarcacion" class=""
+         style="text-align: center;margin-top: -100px;border-style: none;visibility: hidden;{% if not jornadaasignada %}display: none{% endif %}">
+        <form action="/administrativo/registrar_marcada/" id="id_formulario_generico" class="save-modal-form-generic"
+              autocomplete="off" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3" style="text-align: center">
+                <label for="fechamarcada" class="form-label" style="font-size: 22px">Fecha y hora de registro</label>
+                <input type="text" style="text-align: center" name="fechamarcada" readonly value="{{ fechaactual }}"
+                       class="form-control"
+                       id="fechamarcada" aria-describedby="emailHelp">
+                {#                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>#}
+            </div>
+            <div class="mb-3" style="text-align: center">
+                <label for="coordenadasubicacion" class="form-label" style="font-size: 22px">Ubicación</label>
+                <input type="text" style="text-align: center" name="coordenadasubicacion" readonly class="form-control"
+                       id="coordenadasubicacion">
+                <button id="abrirModal" type="button" class="btn btn-info">Ver ubicación</button>
+            </div>
+            <div class="mb-3 form-check">
+            </div>
+            <button type="submit" class="btn btn-primary">Registrar marcada</button>
+        </form>
+    </div>
+    <div id="modalMapa" class="modal">
+        <div class="modal-content">
+            <span id="cerrarModal" style="cursor: pointer;">&times;</span>
+            <div id="mapa" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        const abrirModalButton = document.getElementById("abrirModal");
+        const modalMapa = document.getElementById("modalMapa");
+        const cerrarModal = document.getElementById("cerrarModal");
+        var coordenadasubicacion = document.getElementById("coordenadasubicacion");
+        let mapa; // Variable para el objeto de mapa
+
+        function inicializarMapa(latitud, longitud) {
+            if (mapa) {
+                mapa.remove();
+            }
+
+            // Inicializar el mapa cuando se abre el modal
+            mapa = L.map('mapa').setView([latitud, longitud], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(mapa);
+
+            // Agregar un marcador en la ubicación deseada
+            L.marker([latitud, longitud]).addTo(mapa);
+        }
+
+        abrirModalButton.addEventListener("click", function () {
+            modalMapa.style.display = "block";
+            coordenadasubicacion = coordenadasubicacion.value;
+            const partes = coordenadasubicacion.split(", ");
+            var latitud = partes[0];
+            var longitud = partes[1];
+            inicializarMapa(parseFloat(latitud), parseFloat(longitud));
+
+            // Inicializar el mapa cuando se abre el modal
+            mapa = L.map('mapa').setView([parseFloat(latitud), parseFloat(longitud)], 13);
+
+            // Agregar una capa de mapa
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(mapa);
+
+            // Agregar un marcador en la ubicación deseada
+            const marcador = L.marker([parseFloat(latitud), parseFloat(longitud)]).addTo(mapa);
+
+            // Puedes personalizar el marcador, por ejemplo, cambiando su icono
+            marcador.bindPopup("Ubicación").openPopup();
+        });
+
+        cerrarModal.addEventListener("click", function () {
+            modalMapa.style.display = "none";
+            // Destruir el mapa cuando se cierra el modal
+        });
+    </script>
+{% endblock %}

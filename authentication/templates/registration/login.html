@@ -101,11 +101,8 @@
                         'password': clave,
                     },
                     success: function (data) {
-                        setTimeout(() => {
-                            desbloquearinterfaz()
-                        }, 2500);
-                        setTimeout(function () {
-                            if (data.success === true) {
+                        desbloquearinterfaz()
+                        if (data.success === true) {
 
                                 {#Swal.fire(#}
                                 {#    'Login exitoso!',#}
@@ -121,13 +118,14 @@
 
 
                             } else {
+                                desbloquearinterfaz()
                                 mensaje_error(data.mensaje, 'Login Fallido.');
                             }
-                        }, 2999)
 
                     },
                     error: function () {
-                        alert("Error al iniciar sesión, intentelo más tarde.");
+                        desbloquearinterfaz()
+                        alert("Error al iniciar sesión, inténtelo más tarde.");
                     }
 
                 });

@@ -1,0 +1,47 @@
+{% load static %}
+<li class="dropdown ms-2">
+    <a class="rounded-circle" href="#" role="button" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="avatar avatar-md avatar-indicators avatar-online">
+            <img alt="avatar" src="/media/{{ user.persona.foto }}" class="rounded-circle"/>
+        </div>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
+        <div class="dropdown-item">
+            <div class="d-flex">
+                <div class="avatar avatar-md avatar-indicators avatar-online">
+                    <img alt="avatar" src="/media/{{ user.persona.foto }}"
+                         class="rounded-circle"/>
+                </div>
+                <div class="ms-3 lh-1">
+                    <h5 class="mb-1">{{ user.username }}</h5>
+                    <p class="mb-0 text-muted">{{ user.persona.correo_electronico }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <ul class="list-unstyled">
+
+            <li>
+                <a class="dropdown-item" href="{% url 'administrativo:mibiografia' %}">
+                    <i class="fe fe-user me-2"></i> Perfil
+                </a>
+            </li>
+            {% if user.is_superuser %}
+                <li>
+                    <a class="dropdown-item" href="{% url 'admin:index'%}" target="_blank">
+                        <i class="fe fe-settings me-2"></i> Administración de django
+                    </a>
+                </li>
+            {% endif %}
+
+        </ul>
+        <div class="dropdown-divider"></div>
+        <ul class="list-unstyled">
+            <li>
+                <a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                    <i class="fe fe-power me-2"></i> Cerrar sesión
+                </a>
+            </li>
+        </ul>
+    </div>
+</li>

@@ -1,0 +1,124 @@
+{% csrf_token %}
+<div class="rows" style="width: 700px">
+    <fieldset id="id_fs_empleado" class="mb-3 col-md-12">
+        <label for="id_fs_empleado" class="form-label">Empleado</label>
+        <div style="display: flex">
+            <input type="text" class="form-control" id="id_consultardatos" placeholder="Buscar empleados...">
+            <input type="hidden" class="form-control" id="id_empleado" name="id_empleado" value="0">
+            <div id="selectedItem" style="vertical-align: center;display: none;padding-top: 13px">
+                <span id="clearSelection" style="cursor: pointer;"><i class="fe fe-x"></i></span>
+            </div>
+        </div>
+
+        <ul id="searchResults" style="background: white;opacity: 50%;border-style: solid;border-width: 0.5px;border-radius: 4px"></ul>
+    </fieldset>
+    {% for field in form %}
+        <fieldset id="id_fs_{{ field.name }}" class="mb-3
+                {% if field.field.widget.attrs.col %}{{ field.field.widget.attrs.col }}{% else %}col-md-12{% endif %}">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }} {% if  field.field.required %}
+                <span class="text-danger">*</span>{% endif %} </label>
+            {% if field.field.widget.input_type == 'checkbox' %}
+                <div class="mb-2">
+                    <div class="form-check form-switch"> {{ field }}</div>
+                </div>
+            {% else %}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            {% endif %}
+        </fieldset>
+    {% endfor %}
+
+</div>
+
+<script>
+    $(function () {
+        $('select').selectpicker();
+        flatpickr(".date", {
+            dateFormat: "Y-m-d", // Formato de fecha deseado
+            // Otras configuraciones de Flatpickr aquí
+        });
+    })
+</script>
+
+<script>
+    // Obtén una referencia al campo de búsqueda y a la lista de resultados
+    var searchInput = document.getElementById("id_consultardatos");
+    var selectedValue = document.getElementById("selectedValue");
+    var selectedItem = document.getElementById("selectedItem");
+    var divselectedItem = document.getElementById("selectedItem");
+    var clearSelection = document.getElementById("clearSelection");
+    var searchResults = document.getElementById("searchResults");
+    var id_empleado = document.getElementById("id_empleado");
+
+    // Agrega un evento de escucha al campo de búsqueda
+    searchInput.addEventListener("input", function () {
+        // Obtiene el valor de búsqueda del campo de texto
+        var searchTerm = searchInput.value;
+
+        // Realiza una solicitud AJAX al servidor con el término de búsqueda
+        if (searchTerm.length > 0) {
+            // En este ejemplo, se utiliza la librería jQuery para hacer la solicitud AJAX
+            $.ajax({
+                url: "{% url 'administrativo:consultarempleados' %}",
+                method: "GET",
+                data: {
+                    q: searchTerm,
+                },
+                success: function (data) {
+                    // Limpia la lista de resultados
+                    searchResults.innerHTML = "";
+
+                    // Agrega los resultados al elemento de lista
+                    data.forEach(function (result) {
+                        var listItem = document.createElement("li");
+                        listItem.textContent = result['cedula'] + " - " + result['nombre'];
+                        listItem.value = result['id'];
+                        listItem.style.cursor = "pointer";
+                        listItem.style.color = "black";
+                        listItem.style.listStyle = "none";
+                        listItem.classList.add("search-result"); // Agrega una clase
+                        searchResults.appendChild(listItem);
+                    });
+                },
+                error: function () {
+                    console.error("Error en la solicitud AJAX.");
+                }
+            });
+        } else {
+            // Si el campo de búsqueda está vacío, borra los resultados
+            searchResults.innerHTML = "";
+        }
+    });
+
+    // Agrega un evento de escucha a la lista de resultados
+    searchResults.addEventListener("click", function (event) {
+        var selectedItem = event.target;
+
+
+        if (selectedItem.classList.contains("search-result")) {
+            id_empleado.value = selectedItem.value;
+            searchInput.value = selectedItem.textContent;
+            selectedItem.innerHTML = selectedItem.textContent;
+            divselectedItem.style.display = "block";
+            clearSelection.style.display = "block";
+            searchResults.innerHTML = "";
+            searchInput.readOnly = true;
+        }
+    });
+
+    clearSelection.addEventListener("click", function (event) {
+        searchInput.value = "";
+        selectedItem.style.display = "none";
+        clearSelection.style.display = "none";
+        searchInput.readOnly = false;
+        searchInput.focus();
+        id_empleado.value = 0;
+    });
+</script>

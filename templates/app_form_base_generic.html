@@ -1,0 +1,33 @@
+{% load static %}
+{% block alert_form %}
+
+{% endblock %}
+{% block extra_fields_init %}
+    <input type="hidden" value="{{ id }}" name="id">
+{% endblock %}
+<div class="col-md-12" style="width: 100%">
+    <div class="card mb-3">
+        {% block title_form %}{% endblock %}
+        <div class="card-body ">
+            {% include 'form_snippet.html' %}
+        </div>
+    </div>
+</div>
+{% block extra_fields_end %}
+{% endblock %}
+{% block extra_modal_form %}
+
+{% endblock %}
+<script>
+    $(function () {
+        $('select').selectpicker();
+        flatpickr(".date", {
+            dateFormat: "Y-m-d", // Formato de fecha deseado
+            // Otras configuraciones de Flatpickr aquí
+        });
+    })
+</script>
+{% block script_form %}
+
+{% endblock %}
+
