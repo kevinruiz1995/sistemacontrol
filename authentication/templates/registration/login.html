@@ -1,0 +1,147 @@
+{% extends 'baselogin.html' %}
+{% load static %}
+{% block contenido %}
+    <section class="vh-100" style="margin-top: 90px;">
+        <div class="container-fluid h-custom">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+
+                <div class="col-md-8 col-lg-6 col-xl-4" style="text-align: center">
+                    <div style="display: flex">
+                        <div style="background: #17385A;height: 50px;margin:0px;width: 39%;border-top-right-radius: 5px;border-top-left-radius: 5px;
+                         vertical-align: center;color: white;font-size: 13px;padding-top: 10px;margin-bottom: -10px;position: relative;z-index: 3;">
+                            <i class="fa fa-user" style="margin-right: 4px"></i> INICIO DE SESIÓN
+                        </div>
+{#                        <div class="col-md-9 col-lg-6 col-xl-5" style="margin-left: 120px">#}
+{#                            <img src="{% static 'img/geniuspro.png' %}"#}
+{#                                 class="img-fluid" alt="Sample image"#}
+{#                                 style="width: 200px;margin-top: -50px;max-height: 150px">#}
+{#                        </div>#}
+                    </div>
+                    <form style="text-align: center;width: 100%;border-style: solid;border-width: 1px;margin-top: 80px;background: white;border-color: white;border-radius: 5px;margin-top: 0px">
+                        <div style="background: #17385A;height: 10px;margin:0px;width: 100%;border-top-left-radius: 5px;border-top-right-radius: 5px;margin-bottom: 20px;"></div>
+                        {#                        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">#}
+                        {#                            <p class="lead fw-normal mb-0 me-3"></p>#}
+                        {#                        </div>#}
+                        {##}
+                        {#                        <div class="divider d-flex align-items-center my-4">#}
+                        {#                            <p class="text-center fw-bold mx-3 mb-0">Bienvenido</p>#}
+                        {#                        </div>#}
+                        <!-- Email input -->
+                        <div class="form-outline mb-4" style="text-align: left;margin-left: 20px;margin-right: 20px;">
+                            <label class="form-label" for="form3Example3">Usuario</label>
+                            <input style="border-style: solid; border-width: 1px;border-color: gray;border-radius: 4px"
+                                   type="text" id="id_usuario" class="form-control form-control-lg"
+                                   placeholder="usuario"/>
+                        </div>
+                        <!-- Password input -->
+                        <div class="form-outline mb-3" style="text-align: left;margin-left: 20px;margin-right: 20px">
+                            <label class="form-label" for="form3Example4">Contraseña</label>
+                            <input style="border-style: solid; border-width: 1px;border-color: gray;border-radius: 4px"
+                                   type="password" id="id_clave" class="form-control form-control-lg"
+                                   placeholder="********"/>
+
+                        </div>
+                        {#                        <div class="d-flex justify-content-between align-items-center">#}
+                        {#                            <a href="{% url 'password_reset' %}" class="text-body">Olvidó su contraseña?</a>#}
+                        {#                        </div>#}
+                        <div class="text-center text-lg-center" style="margin-bottom: 20px">
+                            <a href="javascript:;" id="id_login_usuario"
+                               class="btn btn-lg bg-gradient btn-lg w-50 mt-4 mb-0"
+                               style="background: #1192CF;color: white">Iniciar
+                                Sesión
+                            </a>
+                            {#                            <p class="small fw-bold mt-2 pt-1 mb-0">No tienes una cuenta? <a#}
+                            {#                                    href="{% url 'registrate_usuario' %}"#}
+                            {#                                    class="link-danger">Registrarse</a></p>#}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="loader" id="cargando"></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $(".mainBody").css({"background": " #f4f6f7"})
+        })
+
+
+        function delay(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+
+        async function esperar() {
+            await delay(30000);
+        }
+
+        $(function () {
+            login_usuario = function () {
+                var usuario = $("#id_usuario").val();
+                var clave = $("#id_clave").val();
+                if (usuario.length == 0) {
+                    $("#id_usuario").focus();
+                    return false;
+                }
+                if (clave.length == 0) {
+                    $("#id_clave").focus();
+                    return false;
+                }
+                bloquearinterfaz();
+                $.ajax({
+                    url: '{{request.path}}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'peticion': 'login',
+                        'username': usuario,
+                        'password': clave,
+                    },
+                    success: function (data) {
+                        setTimeout(() => {
+                            desbloquearinterfaz()
+                        }, 2500);
+                        setTimeout(function () {
+                            if (data.success === true) {
+
+                                {#Swal.fire(#}
+                                {#    'Login exitoso!',#}
+                                {#    'Bienvenido.',#}
+                                {#    'success'#}
+                                {#).then((result) => {#}
+                                {#    /* Read more about isConfirmed, isDenied below */#}
+                                {#    if (result.isConfirmed) {#}
+                                {#        window.location = data.url;#}
+                                {#    }#}
+                                {# });#}
+                                window.location = data.url;
+
+
+                            } else {
+                                mensaje_error(data.mensaje, 'Login Fallido.');
+                            }
+                        }, 2999)
+
+                    },
+                    error: function () {
+                        alert("Error al iniciar sesión, intentelo más tarde.");
+                    }
+
+                });
+
+            };
+            $("#id_login_usuario").click(function () {
+                login_usuario();
+            });
+            $('#id_usuario, #id_clave').keyup(function (e) {
+                if (e.keyCode == 13) {
+                    login_usuario();
+                }
+            });
+        });
+
+    </script>
+{% endblock %}
