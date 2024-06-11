@@ -2,8 +2,7 @@ from django.urls import path
 
 from administrativo import view_plantillapersonal, view_prestamosalario, views, view_marcar
 from administrativo.view_personas import listar_personas, crear_persona, editar_persona, eliminar_persona, activar_desactivar_perfil
-from administrativo.view_jornada import listar_jornadas, crear_jornada, editar_jornada, eliminar_jornada, listar_detallejornada, \
-    crear_detallejornada, editar_detallejornada, eliminar_detallejornada
+from administrativo.view_jornada import view
 from administrativo.view_marcar import validarRadio, registrar_marcada
 from administrativo.view_jornadaempleado import listar_jornadaempleado, crear_jornadaempleado, consultarempleados, editar_jornadaempleado, \
     eliminar_jornadaempleado
@@ -54,14 +53,7 @@ urlpatterns = [
     path('registrar_marcada/', registrar_marcada, name='registrar_marcada'),
 
     #MÓDULO JORNADA
-    path('jornadas/', listar_jornadas, name='listar_jornadas'),
-    path('jornadas/add', crear_jornada, name='crear_jornada'),
-    path('jornadas/eliminar/<int:pk>/', eliminar_jornada, name='eliminar_jornada'),
-    path('jornadas/editar/<int:pk>/', editar_jornada, name='editar_jornada'),
-    path('jornadas/detalle/<int:id>/', listar_detallejornada, name='listar_detallejornada'),
-    path('jornadas/detalle/add/<int:id>/', crear_detallejornada, name='crear_detallejornada'),
-    path('jornadas/detalle/eliminar/<int:pk>/', eliminar_detallejornada, name='eliminar_detallejornada'),
-    path('jornadas/detalle/editar/<int:pk>/', editar_detallejornada, name='editar_detallejornada'),
+    path('jornadas/', view, name='jornadas'),
 
     #MÓDULO JORNADA EMPLEADO
     path('jornadasempleado/', listar_jornadaempleado, name='listar_jornadaempleado'),
