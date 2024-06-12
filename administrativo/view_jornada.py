@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.db.models import Q
+from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from core.utils import is_ajax
@@ -158,8 +159,8 @@ def view(request):
             if action == 'detallejornada':
                 try:
                     data['titulo'] = 'Detalle de jornada'
-                    data['titulo_tabla'] = 'Lista  de detalles'
-                    jornada = JornadaLaboral.objects.get(id=request.GET['id'])
+                    data['titulo_tabla'] = 'Lista  de detalle'
+                    data['filtro'] = jornada = JornadaLaboral.objects.get(id=request.GET['id'])
                     filtro = (Q(status=True) & Q(jornada=jornada))
                     ruta_paginado = request.path
                     if 'var' in request.GET:
@@ -167,13 +168,36 @@ def view(request):
                         data['var'] = var
                         filtro = filtro & (Q(dia__icontains=var))
                         ruta_paginado += "?var=" + var + "&"
-                    detalles = DetalleJornadaLaboral.objects.filter(filtro).order_by('dia', 'comienza', 'finaliza')
-                    lista = JornadaLaboral.objects.filter(status=True)
+                    lista = DetalleJornadaLaboral.objects.filter(filtro).order_by('dia', 'comienza', 'finaliza')
                     paginator = Paginator(lista, 25)
                     page_number = request.GET.get('page')
                     page_obj = paginator.get_page(page_number)
                     data['page_obj'] = page_obj
-                    return render(request, "jornadas/detallejornada.html", data)
+                    return render(request, "jornadas/viewdetallejornada.html", data)
+                except Exception as ex:
+                    pass
+
+            if action == 'adddetalle':
+                try:
+                    data['titulo'] = 'Agregar nuevo detalle'
+                    data['titulo_formulario'] = 'Formulario de registro de detalle'
+                    data['filtro'] = filtro = JornadaLaboral.objects.get(id=int(request.GET['id']))
+                    data['cabecera'] = filtro
+                    form = DetalleJornadaForm()
+                    data['form'] = form
+                    return render(request, "jornadas/modal/adddetalle.html", data)
+                except Exception as ex:
+                    pass
+
+            if action == 'editdetalle':
+                try:
+                    data['titulo'] = 'Editar detalle de jornada'
+                    data['titulo_formulario'] = 'Edición de detalle'
+                    data['filtro'] = filtro = DetalleJornadaLaboral.objects.get(pk=request.GET['id'])
+                    data['cabecera'] = filtro.jornada
+                    form = DetalleJornadaForm(initial=model_to_dict(filtro))
+                    data['form'] = form
+                    return render(request, "jornadas/modal/adddetalle.html", data)
                 except Exception as ex:
                     pass
 
