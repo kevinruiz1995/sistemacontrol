@@ -11,10 +11,18 @@ from administrativo.view_mismarcaciones import listar_mismarcaciones
 from administrativo.view_marcacionesempleados import listar_personasmarcaciones, listar_marcacionesempleado
 from administrativo.view_mibiografia import mibiografia, datos_familiares, crear_datosfamiliares, editar_datosfamiliares, \
     eliminar_datosfamiliares, editar_mibiografia, mis_marcadas
+from administrativo.conf_acceso_modulo import view_acceso_modulo
+from administrativo.conf_grupo import view_grupo
+from administrativo.view_modulo import view_modulo
 
 app_name = 'administrativo'
 urlpatterns = [
     #URLS CATEGORÍA ADMINISTRATIVO
+
+    #CONFIGURACIÓN SISTEMA
+    path(r'conf_sistemas/grupos/', view_grupo, name='conf_grupo'),
+    path(r'conf_sistemas/modulos/', view_modulo, name='conf_modulo'),
+    path(r'conf_sistemas/acceso_modulos/', view_acceso_modulo, name='conf_acceso_modulo'),
 
     #CONSULTAS AUTOEJECUTABLES
     path('/consultaAdministrativos/', views.consultaAdministrativos, name='consultaAdministrativos'),

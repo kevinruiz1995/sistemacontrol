@@ -1,8 +1,15 @@
 from django import forms
+from django.contrib.auth.models import User, Group
 from core.helper_form import FormBase
 from system.models import CategoriaModulo, Provincia, Canton, Parroquia, Pais, Modulo
 from baseapp.models import Persona
 
+def campo_requerido(form, campo):
+    form.fields[campo].widget.attrs['required'] = True
+
+
+def campo_no_requerido(form, campo):
+    form.fields[campo].widget.attrs['required'] = False
 
 class CategoriaModuloForm(FormBase):
     class Meta:
@@ -26,13 +33,7 @@ class CategoriaModuloForm(FormBase):
 class ModuloForm(FormBase):
     class Meta:
         model = Modulo
-        fields = ['categoria','nombre','es_modulo_padre','icono','url_name', 'orden', 'descripcion', 'visible']
-
-        error_messages = {
-            'nombre': {
-                'unique': "Ya existe un módulo con este nombre. Por favor, elige un nombre diferente."
-            }
-        }
+        fields = ['categoria','nombre','es_modulo_padre','icono','url_name', 'orden', 'descripcion', 'activo']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,7 +45,18 @@ class ModuloForm(FormBase):
         self.fields['url_name'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4'})
         self.fields['orden'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4','min':0})
         self.fields['descripcion'].widget.attrs.update({'class': 'form-control','rows':'4', 'col': 'col-md-7'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input', 'col': 'col-md-4'})
+        self.fields['activo'].widget.attrs.update({'class': 'form-check-input', 'col': 'col-md-4'})
+
+    def add(self):
+        campo_requerido(self, 'icono')
+
+    def editar(self):
+        campo_no_requerido(self, 'icono')
+
+class AccesoModuloForm(forms.Form):
+    grupo = forms.ModelChoiceField(label="Grupo", queryset=Group.objects.all(), widget=forms.Select(attrs={'class': 'form-control', }))
+    modulo = forms.ModelChoiceField(label="Módulo", queryset=Modulo.objects.filter(status=True, activo = True), widget=forms.Select(attrs={'class': 'form-control', }))
+    activo = forms.BooleanField(label='Activo', required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check form-switch ms-2 my-auto is-filled','checked':'checked'}))
 
 
 class PaisForm(FormBase):

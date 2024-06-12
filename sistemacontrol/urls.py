@@ -11,7 +11,7 @@ urlpatterns = [
     path('ubicaciones/', include('baseapp.urls')),  # Incluye las URLs de autenticación de la aplicación modular
     path('sistema/', include('system.urls')),  # Incluye las URLs de autenticación de la aplicación modular
     path('administrativo/', include('administrativo.urls')),  # Incluye las URLs de autenticación de la aplicación modular
-    path('admin_2023_erp/', admin.site.urls),
+    path('admin/', admin.site.urls),
 
     # ...
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

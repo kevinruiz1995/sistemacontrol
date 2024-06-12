@@ -17,6 +17,14 @@ class CategoriaModulo(ModeloBase):
     def __str__(self):
         return self.nombre
 
+    def mismodulos(self, persona, grupo):
+        menu = AccesoModulo.objects.values_list('modulo_id').filter(status=True, activo=True, grupo__id=grupo)
+        modulos = Modulo.objects.filter(status=True, activo=True, pk__in=menu, categoria=self)
+        return modulos
+
+    def todos_los_modulos(self):
+        return Modulo.objects.filter(status=True, activo=True, categoria=self)
+
     def modulos_que_son_hijos(self):
         return Modulo.objects.values_list('id',flat=True).filter(modulo_padre__isnull=False, status=True)
 
@@ -31,7 +39,7 @@ class CategoriaModulo(ModeloBase):
 class Modulo(ModeloBase):
     categoria = models.ForeignKey(CategoriaModulo, on_delete=models.CASCADE, null=True, blank=True,verbose_name=f"Categoría")
     modulo_padre = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, verbose_name=f"Módulo Padre")
-    nombre = models.CharField(default='', max_length=100, verbose_name=f"Nombre", unique=True)
+    nombre = models.CharField(default='', max_length=100, verbose_name=f"Nombre")
     icono = models.CharField(default='fe fe-clipboard', null=True, blank=True, max_length=100, verbose_name=u'Icono')
     url_name = models.CharField(default='', max_length=100, verbose_name=u'URL name',null=True, blank=True)
     descripcion = models.TextField(default='', max_length=300, verbose_name=u'Descripción', null=True, blank=True)

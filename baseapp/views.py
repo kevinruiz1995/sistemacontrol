@@ -27,14 +27,14 @@ def home(request):
         persona_logeado = 'SUPERUSUARIO'
 
     if request.method == 'POST':
-        if 'peticion' in request.POST:
-            peticion = request.POST['peticion']
+        if 'action' in request.POST:
+            action = request.POST['action']
 
     else:
-        if 'peticion' in request.GET:
-            peticion = request.GET['peticion']
+        if 'action' in request.GET:
+            action = request.GET['action']
 
-            if peticion == 'cambioperfil':
+            if action == 'cambioperfil':
                 try:
                     data['titulo'] = 'Menú principal'
                     mis_perfiles = None
