@@ -72,7 +72,7 @@
                     async: false,
                     data: {
                         csrfmiddlewaretoken: '{{ csrf_token }}',
-                        peticion: 'cambioperfil',
+                        action: 'cambioperfil',
                         tipoperfil : href,
                     },
                     dataType: "json",
@@ -80,7 +80,7 @@
 
                     }
                 }).done(function (data) {
-                    if (data.respuesta === true) {
+                    if (data.success === true) {
                         Swal.fire(
                             'Correcto',
                             data.mensaje,
@@ -158,14 +158,14 @@
 {#                                    <ol><a href="#" class="logout"> Perfil paciente</a></ol>#}
 {#                                {% endif %}#}
                                 {% if perfil.is_profesor %}
-                                    <ol><a href="/?peticion=cambioperfil&tipoperfil=is_profesor" tipo="is_profesor" class="logout cambioperfil" >Perfil docente</a></ol>
+                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_profesor" tipo="is_profesor" class="logout cambioperfil" >Perfil docente</a></ol>
                                 {% endif %}
 {#                                {% if perfil.is_alumno %}#}
-{#                                    <ol><a href="/?peticion=cambioperfil&tipoperfil=is_alumno" tipo="is_alumno" class="logout cambioperfil" >Perfil alumno</a></ol>#}
+{#                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_alumno" tipo="is_alumno" class="logout cambioperfil" >Perfil alumno</a></ol>#}
 {##}
 {#                                {% endif %}#}
                                 {% if perfil.is_administrador %}
-                                    <ol><a href="/?peticion=cambioperfil&tipoperfil=is_administrador" tipo="is_administrador" class="logout cambioperfil"> Perfil administrador</a></ol>
+                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_administrador" tipo="is_administrador" class="logout cambioperfil"> Perfil administrador</a></ol>
                                 {% endif %}
 
                             {% endfor %}
@@ -249,7 +249,7 @@
 <script>
 
 
-    function eliminar_registro(peticion, registro, id) {
+    function eliminar_registro(action, registro, id) {
 
         Swal.fire({
             title: '¿Estás seguro de eliminar este registro?',
@@ -268,7 +268,7 @@
                     async: false,
                     data: {
                         csrfmiddlewaretoken: '{{ csrf_token }}',
-                        peticion: peticion,
+                        action: action,
                         id: id,
                     },
                     dataType: "json",
@@ -276,7 +276,7 @@
 
                     }
                 }).done(function (data) {
-                    if (data.respuesta === true) {
+                    if (data.success === true) {
                         Swal.fire(
                             'Eliminado!',
                             data.mensaje,
@@ -323,7 +323,7 @@
                 form.submit();
             };
 
-    function resetear_clave(peticion, registro, id) {
+    function resetear_clave(action, registro, id) {
 
             Swal.fire({
                 title: '¿Estás seguro de resetar la clave esta persona?',
@@ -342,7 +342,7 @@
                         async: false,
                         data: {
                             csrfmiddlewaretoken: '{{ csrf_token }}',
-                            peticion: peticion,
+                            action: action,
                             id: id,
                         },
                         dataType: "json",
@@ -350,7 +350,7 @@
 
                         }
                     }).done(function (data) {
-                        if (data.respuesta === true) {
+                        if (data.success === true) {
                             Swal.fire(
                                 'Clave reseteada!',
                                 data.mensaje,

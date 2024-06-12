@@ -134,13 +134,24 @@ def view(request):
 
             if action == 'add':
                 try:
-                    pass
+                    data['titulo'] = 'Agregar nueva jornada'
+                    data['titulo_formulario'] = 'Formulario de registro de jornada'
+                    form = JornadaForm()
+                    data['form'] = form
+                    return render(request, "jornadas/modal/add.html", data)
                 except Exception as ex:
                     pass
 
             if action == 'edit':
                 try:
-                    pass
+                    data['titulo'] = 'Editar jornada'
+                    data['titulo_formulario'] = 'Edición de jornada'
+                    data['filtro'] = filtro = JornadaLaboral.objects.get(pk=request.GET['id'])
+                    form = JornadaForm(initial={
+                        'nombre': filtro.nombre
+                    })
+                    data['form'] = form
+                    return render(request, "jornadas/modal/add.html", data)
                 except Exception as ex:
                     pass
 
@@ -171,7 +182,14 @@ def view(request):
                 data['titulo'] = 'Jornadas'
                 data['titulo_tabla'] = 'Lista  de jornadas'
                 data['persona_logeado'] = persona_logeado
-                lista = JornadaLaboral.objects.filter(status=True)
+                filtro = (Q(status=True))
+                ruta_paginado = request.path
+                if 'var' in request.GET:
+                    var = request.GET['var']
+                    data['var'] = var
+                    filtro = filtro & (Q(nombre__icontains=var))
+                    ruta_paginado += "?var=" + var + "&"
+                lista = JornadaLaboral.objects.filter(filtro).order_by('id')
                 paginator = Paginator(lista, 25)
                 page_number = request.GET.get('page')
                 page_obj = paginator.get_page(page_number)
