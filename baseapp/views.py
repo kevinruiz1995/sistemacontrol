@@ -60,7 +60,7 @@ def home(request):
                 data['titulo'] = 'Menú principal'
                 mis_perfiles = None
                 # obtener perfiles
-                if not 'CAM' == persona_logeado:
+                if not 'SUPERUSUARIO' == persona_logeado:
                     mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=persona_logeado)
                     data['mis_perfiles'] = mis_perfiles
 
