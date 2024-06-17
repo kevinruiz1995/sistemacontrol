@@ -44,7 +44,7 @@ def view_modulo(request):
                             categoria=form.cleaned_data['categoria'],
                             nombre=form.cleaned_data['nombre'],
                             descripcion=form.cleaned_data['descripcion'],
-                            icono=form.cleaned_data['icono'],
+                            logo=form.cleaned_data['logo'],
                             url_name=form.cleaned_data['url_name'],
                             activo=form.cleaned_data['activo']
                         )
@@ -75,10 +75,10 @@ def view_modulo(request):
                         modulo.categoria = form.cleaned_data['categoria']
                         modulo.nombre = form.cleaned_data['nombre']
                         modulo.descripcion = form.cleaned_data['descripcion']
-                        if form.cleaned_data['icono']:
-                            modulo.icono = form.cleaned_data['icono']
+                        if form.cleaned_data['logo']:
+                            modulo.logo = form.cleaned_data['logo']
                         else:
-                            modulo.icono = request.POST['imagen_url_name']
+                            modulo.logo = request.POST['imagen_url_name']
                         modulo.url_name = form.cleaned_data['url_name']
                         modulo.activo = form.cleaned_data['activo']
                         modulo.save(request)

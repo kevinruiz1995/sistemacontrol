@@ -33,7 +33,7 @@ class CategoriaModuloForm(FormBase):
 class ModuloForm(FormBase):
     class Meta:
         model = Modulo
-        fields = ['categoria','nombre','es_modulo_padre','icono','url_name', 'orden', 'descripcion', 'activo']
+        fields = ['categoria','nombre','es_modulo_padre', 'url_name', 'orden', 'descripcion', 'activo', 'logo']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,17 +41,17 @@ class ModuloForm(FormBase):
         self.fields['categoria'].widget.attrs.update({'class': 'select', 'col': 'col-md-4'})
         self.fields['nombre'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4'})
         self.fields['es_modulo_padre'].widget.attrs.update({'class': 'form-check-input', 'col': 'col-md-4'})
-        self.fields['icono'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4'})
         self.fields['url_name'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4'})
         self.fields['orden'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4','min':0})
         self.fields['descripcion'].widget.attrs.update({'class': 'form-control','rows':'4', 'col': 'col-md-7'})
         self.fields['activo'].widget.attrs.update({'class': 'form-check-input', 'col': 'col-md-4'})
+        self.fields['logo'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4'})
 
     def add(self):
-        campo_requerido(self, 'icono')
+        campo_requerido(self, 'logo')
 
     def editar(self):
-        campo_no_requerido(self, 'icono')
+        campo_no_requerido(self, 'logo')
 
 class AccesoModuloForm(forms.Form):
     grupo = forms.ModelChoiceField(label="Grupo", queryset=Group.objects.all(), widget=forms.Select(attrs={'class': 'form-control', }))

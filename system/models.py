@@ -41,6 +41,7 @@ class Modulo(ModeloBase):
     modulo_padre = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, verbose_name=f"Módulo Padre")
     nombre = models.CharField(default='', max_length=100, verbose_name=f"Nombre")
     icono = models.CharField(default='fe fe-clipboard', null=True, blank=True, max_length=100, verbose_name=u'Icono')
+    logo = models.FileField(verbose_name="Logo", upload_to='logomodulo/', null=True, blank=True)
     url_name = models.CharField(default='', max_length=100, verbose_name=u'URL name',null=True, blank=True)
     descripcion = models.TextField(default='', max_length=300, verbose_name=u'Descripción', null=True, blank=True)
     orden = models.IntegerField(default=0, verbose_name=u'Orden')
