@@ -21,7 +21,7 @@ class DatosOrganizacion(ModeloBase):
 
 class PersonaPerfil(ModeloBase):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE, blank=True, null=True)
-    is_administrador_principal = models.BooleanField(default=False, verbose_name=u'Es administrador principal?')
+    is_jefe_departamental = models.BooleanField(default=False, verbose_name=u'Es jefe departamental?')
     is_administrador = models.BooleanField(default=False, verbose_name=u'Es administrador?')
     is_empleado = models.BooleanField(default=False, verbose_name=u'Es empleado?')
 

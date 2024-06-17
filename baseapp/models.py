@@ -52,8 +52,8 @@ class Persona(ModeloBase):
         elif self.ruc:
             return self.ruc
 
-    def is_administrador_principal(self):
-        return self.personaperfil_set.filter(status=True, is_administrador_principal=True).exists()
+    def is_jefe_departamental(self):
+        return self.personaperfil_set.filter(status=True, is_jefe_departamental=True).exists()
 
     def perfil_administrativo(self):
         return self.personaperfil_set.filter(status=True, is_administrador=True).exists()

@@ -43,10 +43,10 @@ def global_context(request):
             perfil = PersonaPerfil.objects.filter(status=True, persona=persona)
             if perfil.exists():
                 perfil = perfil.first()
-                if perfil.is_administrador_principal == True:
+                if perfil.is_jefe_departamental == True:
                     grupo_administrativo_principal = Group.objects.filter(name='Administrativo Principal')
                     if grupo_administrativo_principal:
-                        request.session['administrador_principal'] = True
+                        request.session['is_jefe_departamental'] = True
                         request.session['tipoperfil'] = tipoperfil = grupo_administrativo_principal.first().id
                         lista_grupos.append(tipoperfil)
                 if perfil.is_administrador == True:
