@@ -1,11 +1,12 @@
 from django.urls import path
 
 from administrativo import view_plantillapersonal, view_prestamosalario, views, view_marcar
-from administrativo.view_personas import view_persona, crear_persona, editar_persona, eliminar_persona, activar_desactivar_perfil
+from administrativo.view_personas import view_persona
 from administrativo.view_jornada import view
 from administrativo.view_marcar import validarRadio, registrar_marcada
 from administrativo.view_jornadaempleado import listar_jornadaempleado, crear_jornadaempleado, consultarempleados, editar_jornadaempleado, \
     eliminar_jornadaempleado
+from administrativo.view_plantillapersonal import view_personal
 from administrativo.organizacion import editar_organizacion
 from administrativo.view_mismarcaciones import listar_mismarcaciones
 from administrativo.view_marcacionesempleados import listar_personasmarcaciones, listar_marcacionesempleado
@@ -35,25 +36,14 @@ urlpatterns = [
 
     #MÓDULO PERSONAS
     path('personas/', view_persona, name='view_persona'),
-    path('personas/add', crear_persona, name='crear_persona'),
-    path('personas/eliminar/<int:pk>/', eliminar_persona, name='eliminar_persona'),
-    path('personas/editar/<int:pk>/', editar_persona, name='editar_persona'),
-    path('personas/activar_desactivar_perfil/', activar_desactivar_perfil, name='activar_desactivar_perfil'),
 
     #MÓDULO PLANTILLA PERSONAL
-    path('personal/', view_plantillapersonal.listar_personal, name='listar_personal'),
-    path('personal/add', view_plantillapersonal.crear_personal, name='crear_personal'),
-    path('personal/eliminar/<int:pk>/', view_plantillapersonal.eliminar_personal, name='eliminar_personal'),
-    path('personal/editar/<int:pk>/', view_plantillapersonal.editar_personal, name='editar_personal'),
-    path('personal/actualizar_estado/', view_plantillapersonal.actualizar_estado, name='actualizar_estado'),
+    path('personal/', view_personal, name='listar_personal'),
 
     #MÓDULO PRÉSTAMO SALARIO
     path('prestamo/', view_prestamosalario.listar_personal, name='listar_personales'),
     path('prestamo/prestamos', view_prestamosalario.listar_prestamos_empleado, name='listar_prestamos_empleado'),
     path('prestamo/prestamos/add', view_prestamosalario.solicitar_prestamo, name='solicitar_prestamo'),
-    path('prestamo/eliminar/<int:pk>/', view_plantillapersonal.eliminar_personal, name='eliminar_personal'),
-    path('prestamo/editar/<int:pk>/', view_plantillapersonal.editar_personal, name='editar_personal'),
-    path('prestamo/actualizar_estado/', view_plantillapersonal.actualizar_estado, name='actualizar_estado'),
 
     #MÓDULO MARCAR
     path('marcar/', view_marcar.view_marcar, name='view_marcar'),
