@@ -4,8 +4,7 @@ from administrativo import view_plantillapersonal, view_prestamosalario, views, 
 from administrativo.view_personas import view_persona
 from administrativo.view_jornada import view
 from administrativo.view_marcar import validarRadio, registrar_marcada
-from administrativo.view_jornadaempleado import listar_jornadaempleado, crear_jornadaempleado, consultarempleados, editar_jornadaempleado, \
-    eliminar_jornadaempleado
+from administrativo.view_jornadaempleado import view_jornadaempleado, consultarempleados
 from administrativo.view_plantillapersonal import view_personal
 from administrativo.organizacion import editar_organizacion
 from administrativo.view_mismarcaciones import listar_mismarcaciones
@@ -54,10 +53,7 @@ urlpatterns = [
     path('jornadas/', view, name='jornadas'),
 
     #MÓDULO JORNADA EMPLEADO
-    path('jornadasempleado/', listar_jornadaempleado, name='listar_jornadaempleado'),
-    path('jornadasempleado/add', crear_jornadaempleado, name='crear_jornadaempleado'),
-    path('jornadasempleado/editar/<int:pk>/', editar_jornadaempleado, name='editar_jornadaempleado'),
-    path('jornadasempleado/eliminar/<int:pk>/', eliminar_jornadaempleado, name='eliminar_jornadaempleado'),
+    path('jornadasempleado/', view_jornadaempleado, name='listar_jornadaempleado'),
     path('/consultarempleados/', consultarempleados, name='consultarempleados'),
 
     #MÓDULO MIS MARCACIONES
