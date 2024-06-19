@@ -6,9 +6,12 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from core.core import meses
 from administrativo.models import PlantillaPersona, RegistroEntradaSalidaDiario, MOTIVO_MARCACION
+from system.seguridad_sistema import control_entrada_modulos
 
 
 @login_required
+@control_entrada_modulos
+@transaction.atomic()
 def listar_personasmarcaciones(request,search=None):
     try:
         parametros = ''

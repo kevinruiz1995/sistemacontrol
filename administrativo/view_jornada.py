@@ -14,7 +14,7 @@ from baseapp.models import Persona
 from administrativo.models import JornadaLaboral, DetalleJornadaLaboral
 from administrativo.forms import JornadaForm, DetalleJornadaForm
 from authentication.models import CustomUser
-from system.seguridad_sistema import secure_module
+from system.seguridad_sistema import control_entrada_modulos
 
 
 @login_required

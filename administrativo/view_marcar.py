@@ -10,8 +10,11 @@ from administrativo.models import PlantillaPersona, Persona, JornadaLaboral, Reg
     JornadaEmpleado, DetalleJornadaLaboral
 from geopy.geocoders import Nominatim
 from math import radians, sin, cos, sqrt, atan2
+from system.seguridad_sistema import control_entrada_modulos
 
-
+@login_required()
+@control_entrada_modulos
+@transaction.atomic()
 def view_marcacion(request):
     global ex
     data = {}

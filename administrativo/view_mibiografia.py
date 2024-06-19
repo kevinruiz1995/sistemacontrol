@@ -12,9 +12,12 @@ from administrativo.models import DatosFamiliares, RegistroEntradaSalidaDiario, 
 from administrativo.forms import DatosFamiliaresForm
 from baseapp.models import Persona
 from baseapp.forms import PersonaForm
+from system.seguridad_sistema import control_entrada_modulos
 
 
 @login_required
+@control_entrada_modulos
+@transaction.atomic()
 def mibiografia(request,search=None):
     try:
         persona = Persona.objects.get(id=int(request.session['idpersona']))

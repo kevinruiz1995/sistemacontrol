@@ -155,15 +155,15 @@
                             {% for perfil in mis_perfiles %}
 
                                 {% if perfil.is_jefe_departamental %}
-                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_jefe_departamental" tipo="is_jefe_departamental" class="logout cambioperfil" >Perfil jefe departamental</a></ol>
+                                    <ol><a style="text-align:left" href="/?action=cambioperfil&tipoperfil=is_jefe_departamental" tipo="is_jefe_departamental" class="logout cambioperfil {% if request.session.nombre_perfil == 'JEFE DEPARTAMENTAL' %}btn btn-info{% endif %}" >Perfil jefe departamental</a></ol>
                                 {% endif %}
 
                                 {% if perfil.is_administrador %}
-                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_administrador" tipo="is_administrador" class="logout cambioperfil"> Perfil administrador</a></ol>
+                                    <ol><a style="text-align:left" href="/?action=cambioperfil&tipoperfil=is_administrador" tipo="is_administrador" class="logout cambioperfil {% if request.session.nombre_perfil == 'ADMINISTRATIVO' %}btn btn-info{% endif %}"> Perfil administrador</a></ol>
                                 {% endif %}
 
                                 {% if perfil.is_empleado %}
-                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_empleado" tipo="is_empleado" class="logout cambioperfil" >Perfil empleado</a></ol>
+                                    <ol><a style="text-align:left" href="/?action=cambioperfil&tipoperfil=is_empleado" tipo="is_empleado" class="logout cambioperfil {% if request.session.nombre_perfil == 'EMPLEADO' %}btn btn-info{% endif %}" >Perfil empleado</a></ol>
 
                                 {% endif %}
 

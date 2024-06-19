@@ -1,10 +1,10 @@
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from system.models import AccesoModulo, Modulo
-
 
 
 def control_entrada_modulos(f):
     def new_f(*args, **kwargs):
+        print("Por aquí")
         request = args[0]
         if request.user.is_authenticated:
             if 'tipoperfil' in request.session:

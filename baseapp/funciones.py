@@ -112,16 +112,21 @@ def add_data_aplication(request,data):
         mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=request.user.persona_set.filter(status=True).first())
         if mis_perfiles:
             tipoperfil = mis_perfiles.first()
+            if 'nombre_perfil' in request.session:
+                del request.session['nombre_perfil']
             if tipoperfil.is_jefe_departamental == True:
                 grupo_jefe = Group.objects.filter(name='JEFE DEPARTAMENTAL')
+                request.session['nombre_perfil'] = 'JEFE DEPARTAMENTAL'
                 if grupo_jefe:
                     request.session['tipoperfil'] = grupo_jefe.first().id
             elif tipoperfil.is_administrador == True:
                 grupo_administrativo = Group.objects.filter(name='ADMINISTRATIVO')
+                request.session['nombre_perfil'] = 'ADMINISTRATIVO'
                 if grupo_administrativo:
                     request.session['tipoperfil'] = grupo_administrativo.first().id
             elif tipoperfil.is_empleado == True:
                 grupo_empleado = Group.objects.filter(name='EMPLEADO')
+                request.session['nombre_perfil'] = 'EMPLEADO'
                 if grupo_empleado:
                     request.session['tipoperfil'] = grupo_empleado.first().id
             request.session['perfil_principal'] = model_to_dict(mis_perfiles.first())
@@ -154,6 +159,8 @@ def act_data_aplication(request,data):
         del request.session['perfil_principal']
     if 'tipoperfil' in request.session:
         del request.session['tipoperfil']
+    if 'nombre_perfil' in request.session:
+        del request.session['nombre_perfil']
 
 
     if 'lista_url_ruta' not in request.session:
@@ -175,14 +182,17 @@ def act_data_aplication(request,data):
         tipoperfil = mis_perfiles.first()
         if data['tipoperfil'] == 'is_administrador':
             grupo_administrativo = Group.objects.filter(name='ADMINISTRATIVO')
+            request.session['nombre_perfil'] = 'ADMINISTRATIVO'
             if grupo_administrativo:
                 request.session['tipoperfil'] = grupo_administrativo.first().id
         elif data['tipoperfil'] == 'is_jefe_departamental':
             grupo_jefe = Group.objects.filter(name='JEFE DEPARTAMENTAL')
+            request.session['nombre_perfil'] = 'JEFE DEPARTAMENTAL'
             if grupo_jefe:
                 request.session['tipoperfil'] = grupo_jefe.first().id
-        elif data['tipoperfil'] == 'is_alumno':
+        elif data['tipoperfil'] == 'is_empleado':
             grupo_empleado = Group.objects.filter(name='EMPLEADO')
+            request.session['nombre_perfil'] = 'EMPLEADO'
             if grupo_empleado:
                 request.session['tipoperfil'] = grupo_empleado.first().id
         request.session['perfil_principal'] = model_to_dict(mis_perfiles.first())

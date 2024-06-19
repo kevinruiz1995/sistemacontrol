@@ -9,9 +9,12 @@ from core.utils import is_ajax
 from core.core import meses
 from administrativo.forms import PlantillaPersonalForm
 from administrativo.models import RegistroEntradaSalidaDiario, MOTIVO_MARCACION
+from system.seguridad_sistema import control_entrada_modulos
 
 
 @login_required
+@control_entrada_modulos
+@transaction.atomic()
 def listar_mismarcaciones(request,search=None):
     try:
         marcaciones, mes, parametros = [], None, ''

@@ -13,7 +13,12 @@ from core.core import DIAS_SEMANA
 from administrativo.models import JornadaLaboral, DetalleJornadaLaboral, JornadaEmpleado, PlantillaPersona
 from administrativo.forms import JornadaForm, DetalleJornadaForm, JornadaEmpleadoForm
 from authentication.models import CustomUser
+from system.seguridad_sistema import control_entrada_modulos
 
+
+@login_required
+@control_entrada_modulos
+@transaction.atomic()
 def view_jornadaempleado(request):
     global ex
     data = {}

@@ -9,7 +9,11 @@ from baseapp.funciones import add_data_aplication
 from baseapp.models import Persona
 from administrativo.forms import PlantillaPersonalForm
 from administrativo.models import PlantillaPersona, PersonaPerfil
+from system.seguridad_sistema import control_entrada_modulos
 
+@login_required
+@control_entrada_modulos
+@transaction.atomic()
 def view_personal(request):
     global ex
     data = {}
