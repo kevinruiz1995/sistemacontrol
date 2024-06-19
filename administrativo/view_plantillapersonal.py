@@ -32,6 +32,7 @@ def view_personal(request):
                             instance = PlantillaPersona(
                                 persona=form.cleaned_data['persona'],
                                 cargo=form.cleaned_data['cargo'],
+                                coordenadamarcacion=form.cleaned_data['coordenadamarcacion'],
                                 salario=form.cleaned_data['salario'],
                                 fecha_ingreso=form.cleaned_data['fecha_ingreso'],
                                 fecha_terminacion=form.cleaned_data['fecha_terminacion'],
@@ -64,6 +65,7 @@ def view_personal(request):
                         if form.is_valid():
                             instance.persona = form.cleaned_data['persona']
                             instance.cargo = form.cleaned_data['cargo']
+                            instance.coordenadamarcacion = form.cleaned_data['coordenadamarcacion']
                             instance.salario = form.cleaned_data['salario']
                             instance.fecha_ingreso = form.cleaned_data['fecha_ingreso']
                             instance.fecha_terminacion = form.cleaned_data['fecha_terminacion']
@@ -133,6 +135,7 @@ def view_personal(request):
                     form = PlantillaPersonalForm(initial={
                         'persona': instance.persona,
                         'cargo': instance.cargo,
+                        'coordenadamarcacion': instance.coordenadamarcacion,
                         'salario': instance.salario,
                         'area': instance.area,
                         'activo': instance.activo,

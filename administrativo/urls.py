@@ -14,6 +14,7 @@ from administrativo.view_mibiografia import mibiografia, datos_familiares, crear
 from administrativo.conf_acceso_modulo import view_acceso_modulo
 from administrativo.conf_grupo import view_grupo
 from administrativo.view_modulo import view_modulo
+from administrativo.view_configuracioncoordenada import view_configuracioncoordenada
 
 app_name = 'administrativo'
 urlpatterns = [
@@ -55,6 +56,9 @@ urlpatterns = [
     #MÓDULO JORNADA EMPLEADO
     path('jornadasempleado/', view_jornadaempleado, name='listar_jornadaempleado'),
     path('/consultarempleados/', consultarempleados, name='consultarempleados'),
+
+    #MÓDULO CONFIGURACIÓN COORDENADAS
+    path('confcoordenadas/', view_configuracioncoordenada, name='confcoordenadas'),
 
     #MÓDULO MIS MARCACIONES
     path('mismarcaciones/', listar_mismarcaciones, name='listar_mismarcaciones'),

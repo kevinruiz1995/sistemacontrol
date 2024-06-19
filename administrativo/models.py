@@ -103,11 +103,25 @@ class Area(ModeloBase):
         self.nombre = self.nombre.strip().capitalize()
         super(Area, self).save(*args, **kwargs)
 
+#MODELO PARA CONFIGURAR LAS COORDENADAS
+class ConfiguracionCoordenadaMarcacion(ModeloBase):
+    nombre = models.CharField(blank=True, null=True, max_length=500, verbose_name=u"Nombre")
+    latitud = models.FloatField(default=0, blank=True, null=True, verbose_name="Latitud")
+    longitud = models.FloatField(default=0, blank=True, null=True, verbose_name="Longitud")
+    radio = models.FloatField(default=0, blank=True, null=True, verbose_name="Radio disponible para marcar")
+
+    class Meta:
+        verbose_name = 'Coordenada para marcar'
+        verbose_name_plural = 'Coordenadas para las marcaciones'
+
+    def __str__(self):
+        return f"{self.nombre} {self.latitud}, {self.longitud}"
 
 #REGISTRO PERSONAL DE LA EMPRESA
 class PlantillaPersona(ModeloBase):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Persona")
     cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Cargo")
+    coordenadamarcacion = models.ForeignKey(ConfiguracionCoordenadaMarcacion, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Coordenada disponible para marcar")
     salario = models.DecimalField(max_digits=30, decimal_places=2, blank=True, null=True, verbose_name="Salario")
     fecha_ingreso = models.DateField(blank=True, null=True, verbose_name="Fecha de inicio del contrato")
     fecha_terminacion = models.DateField(blank=True, null=True, verbose_name="Fecha de terminación del contrato")

@@ -1,13 +1,13 @@
 from django import forms
 from administrativo.models import PlantillaPersona, Cargo, Area, JornadaLaboral, DetalleJornadaLaboral, JornadaEmpleado, \
-    DatosOrganizacion, MOTIVO_MARCACION, DatosFamiliares, Genero
+    DatosOrganizacion, MOTIVO_MARCACION, DatosFamiliares, Genero, ConfiguracionCoordenadaMarcacion
 from core.core import DIAS_SEMANA, PARENTESCOS
 
 class PlantillaPersonalForm(forms.ModelForm):
     class Meta:
         model = PlantillaPersona
         fields = [
-                    'persona', 'cargo', 'salario', 'fecha_ingreso', 'fecha_terminacion', 'area', 'activo'
+                    'persona', 'cargo', 'salario', 'fecha_ingreso', 'fecha_terminacion', 'area', 'activo', 'coordenadamarcacion'
                  ]
 
         error_messages = {
@@ -21,12 +21,14 @@ class PlantillaPersonalForm(forms.ModelForm):
         # Agregar clases CSS específicas a cada campo
         self.fields['persona'].widget.attrs.update({'class': 'form-control', 'data-live-search':'true', 'col': 'col-md-12'})
         self.fields['cargo'].widget.attrs.update({'class': 'form-control', 'data-live-search':'true', 'col': 'col-md-6'})
+        self.fields['coordenadamarcacion'].widget.attrs.update({'class': 'form-control', 'data-live-search':'true', 'col': 'col-md-6'})
         self.fields['salario'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6'})
         self.fields['fecha_ingreso'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'yyyy-mm-dd'})
         self.fields['fecha_terminacion'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'yyyy-mm-dd'})
         self.fields['area'].widget.attrs.update({'class': 'form-control', 'data-live-search':'true', 'col': 'col-md-6'})
         self.fields['activo'].widget.attrs.update({'class': 'form-check-input', 'col': 'col-md-6'})
 
+        self.fields['coordenadamarcacion'].queryset = ConfiguracionCoordenadaMarcacion.objects.filter(status=True)
         self.fields['cargo'].queryset = Cargo.objects.filter(status=True)
         self.fields['area'].queryset = Area.objects.filter(status=True)
 
@@ -150,3 +152,18 @@ class DatosFamiliaresForm(forms.ModelForm):
         self.fields['genero'].queryset = Genero.objects.filter(status=True)
         self.fields['parentesco'].queryset = PARENTESCOS
 
+
+class ConfiguracionCoordenadaForm(forms.ModelForm):
+    class Meta:
+        model = ConfiguracionCoordenadaMarcacion
+        fields = [
+                    'nombre', 'latitud', 'longitud', 'radio'
+                 ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Agregar clases CSS específicas a cada campo
+        self.fields['nombre'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-12', 'required': 'true', 'type': 'text', 'placeholder': 'Nombre'})
+        self.fields['latitud'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6', 'required': 'true', 'type': 'input', 'placeholder': 'Latitud'})
+        self.fields['longitud'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6', 'required': 'true', 'type': 'input', 'placeholder': 'Longitud'})
+        self.fields['radio'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6', 'required': 'true', 'type': 'input', 'placeholder': 'Radio'})
