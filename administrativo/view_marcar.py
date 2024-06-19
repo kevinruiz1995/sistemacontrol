@@ -190,7 +190,7 @@ def validarRadio(request):
                               coordenadas_consultadas[1])
 
         # Definir un radio de 50 metros
-        radio = request.session['radio'] # en metros
+        radio = coordenadas_empleado.radio # en metros
 
         # Validar si la distancia es menor o igual al radio
         if float(distancia) <= float(radio):
