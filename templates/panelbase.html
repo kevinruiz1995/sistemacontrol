@@ -147,25 +147,24 @@
                         </a>
                         <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4"
                             aria-labelledby="dropdownMenuButton">
-                            <ol> <a href="accounts/password_change"  data-bs-toggle="tooltip" data-bs-placement="bottom"  data-container="body" data-animation="true">
+                            <ol> <a href="/accounts/password_change"  data-bs-toggle="tooltip" data-bs-placement="bottom"  data-container="body" data-animation="true">
                                     Cambiar contraseña</a><br></ol>
-                            <ol> <a href="accounts/logout" class="logout"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Cerrar Sesión" data-container="body" data-animation="true">
+                            <ol> <a href="/accounts/logout" class="logout"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Cerrar Sesión" data-container="body" data-animation="true">
                                     Cerrar Sesión</a></ol>
 
                             {% for perfil in mis_perfiles %}
 
-{#                                {% if perfil.is_paciente %}#}
-{#                                    <ol><a href="#" class="logout"> Perfil paciente</a></ol>#}
-{#                                {% endif %}#}
-                                {% if perfil.is_profesor %}
-                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_profesor" tipo="is_profesor" class="logout cambioperfil" >Perfil docente</a></ol>
+                                {% if perfil.is_jefe_departamental %}
+                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_jefe_departamental" tipo="is_jefe_departamental" class="logout cambioperfil" >Perfil jefe departamental</a></ol>
                                 {% endif %}
-{#                                {% if perfil.is_alumno %}#}
-{#                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_alumno" tipo="is_alumno" class="logout cambioperfil" >Perfil alumno</a></ol>#}
-{##}
-{#                                {% endif %}#}
+
                                 {% if perfil.is_administrador %}
                                     <ol><a href="/?action=cambioperfil&tipoperfil=is_administrador" tipo="is_administrador" class="logout cambioperfil"> Perfil administrador</a></ol>
+                                {% endif %}
+
+                                {% if perfil.is_empleado %}
+                                    <ol><a href="/?action=cambioperfil&tipoperfil=is_empleado" tipo="is_empleado" class="logout cambioperfil" >Perfil empleado</a></ol>
+
                                 {% endif %}
 
                             {% endfor %}

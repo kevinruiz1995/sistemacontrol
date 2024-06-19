@@ -105,6 +105,8 @@ def add_data_aplication(request,data):
     if 'lista_url_ruta' not in request.session:
         request.session['lista_url_ruta'] = [['/', 'Inicio']]
     lista_url_ruta = request.session['lista_url_ruta']
+    mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=request.user.persona_set.filter(status=True).first())
+    data['mis_perfiles'] = mis_perfiles
 
     if 'perfil_principal' not in request.session:
         mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=request.user.persona_set.filter(status=True).first())
@@ -127,7 +129,68 @@ def add_data_aplication(request,data):
 
     if request.method == 'GET' and request.path:
         if Modulo.objects.values("id").filter(url_name=request.path[1:],status=True).exists():
-            modulo = Modulo.objects.values("url_name", "nombre").filter(status=True,url_name=request.path[1:])[0]
+            modulo = Modulo.objects.values("url_name", "nombre").filter(status=True, url_name=request.path[1:])[0]
+            ruta = ['/' + modulo['url_name'], modulo['nombre']]
+            if lista_url_ruta.count(ruta) <= 0:
+                if lista_url_ruta.__len__() >= 7:
+                    last_ruta = lista_url_ruta[1]
+                    lista_url_ruta.remove(last_ruta)
+                    lista_url_ruta.append(ruta)
+                else:
+                    lista_url_ruta.append(ruta)
+            request.session['lista_url_ruta'] = lista_url_ruta
+        else:
+            pass
+    data["lista_url_ruta"] = lista_url_ruta
+
+def act_data_aplication(request,data):
+    from system.models import Modulo
+    from administrativo.models import Persona, PersonaPerfil
+
+    if 'lista_url_ruta' in request.session:
+        del request.session['lista_url_ruta']
+    # del request.session['persona']
+    if 'perfil_principal' in request.session:
+        del request.session['perfil_principal']
+    if 'tipoperfil' in request.session:
+        del request.session['tipoperfil']
+
+
+    if 'lista_url_ruta' not in request.session:
+        request.session['lista_url_ruta'] = [['/', 'Inicio']]
+    lista_url_ruta = request.session['lista_url_ruta']
+    # if 'persona' not in request.session:
+    #     usuariologeado = request.user
+    #     personalogeada = Persona.objects.filter(usuario=usuariologeado, status=True)
+    #     data['personalogeada'] = personalogeada[0]
+    #     if personalogeada:
+    #         request.session['persona'] = model_to_dict(personalogeada.first())
+    #     else:
+    #         persona_logeada = 'CAM'
+    #         request.session['persona'] = 'CAM'
+        # request.session.save()
+
+    if 'perfil_principal' not in request.session:
+        mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=request.user.persona_set.filter(status=True).first())
+        tipoperfil = mis_perfiles.first()
+        if data['tipoperfil'] == 'is_administrador':
+            grupo_administrativo = Group.objects.filter(name='ADMINISTRATIVO')
+            if grupo_administrativo:
+                request.session['tipoperfil'] = grupo_administrativo.first().id
+        elif data['tipoperfil'] == 'is_jefe_departamental':
+            grupo_jefe = Group.objects.filter(name='JEFE DEPARTAMENTAL')
+            if grupo_jefe:
+                request.session['tipoperfil'] = grupo_jefe.first().id
+        elif data['tipoperfil'] == 'is_alumno':
+            grupo_empleado = Group.objects.filter(name='EMPLEADO')
+            if grupo_empleado:
+                request.session['tipoperfil'] = grupo_empleado.first().id
+        request.session['perfil_principal'] = model_to_dict(mis_perfiles.first())
+        # request.session.save()
+
+    if request.method == 'GET' and request.path:
+        if Modulo.objects.values("id").filter(url_name=request.path[1:],status=True).exists():
+            modulo = Modulo.objects.values("url_name", "nombre").filter(status=True, url_name=request.path[1:])[0]
             ruta = ['/' + modulo['url_name'], modulo['nombre']]
             if lista_url_ruta.count(ruta) <= 0:
                 if lista_url_ruta.__len__() >= 7:

@@ -18,6 +18,7 @@ class CategoriaModulo(ModeloBase):
         return self.nombre
 
     def mismodulos(self, persona, grupo):
+        grupo = grupo if grupo else None
         menu = AccesoModulo.objects.values_list('modulo_id').filter(status=True, activo=True, grupo__id=grupo)
         modulos = Modulo.objects.filter(status=True, activo=True, pk__in=menu, categoria=self)
         return modulos

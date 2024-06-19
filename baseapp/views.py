@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from baseapp.models import Persona
-from baseapp.funciones import add_data_aplication
+from baseapp.funciones import add_data_aplication, act_data_aplication
 from system.models import Modulo, AccesoModulo, CategoriaModulo
 from baseapp.models import Persona
 from administrativo.models import PersonaPerfil, PlantillaPersona, JornadaEmpleado, DetalleRegistroEntradaSalida
@@ -44,7 +44,7 @@ def home(request):
                     data['mis_perfiles'] = mis_perfiles
                     data['tipoperfil'] = request.GET['tipoperfil']
                     act_data_aplication(request, data)
-                    tipoperfil = request.session['tipoperfil']
+                    tipoperfil = request.session['tipoperfil'] if 'tipoperfil' in request.session else None
 
                     menu = AccesoModulo.objects.values_list('modulo_id').filter(status=True, activo=True,
                                                                                 grupo_id=tipoperfil)
@@ -53,7 +53,7 @@ def home(request):
                     data['modulos'] = modulos
                     return HttpResponseRedirect("/")
                 except Exception as ex:
-                    print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+                    print('Error on line {}'.format(ex.exc_info()[-1].tb_lineno))
 
         else:
             try:
