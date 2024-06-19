@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseRedirect
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
+from baseapp.funciones import add_data_aplication
 from core.utils import is_ajax
 from administrativo.models import PlantillaPersona, Persona, JornadaLaboral, RegistroEntradaSalidaDiario, DetalleRegistroEntradaSalida, \
     JornadaEmpleado, DetalleJornadaLaboral
@@ -11,13 +12,54 @@ from geopy.geocoders import Nominatim
 from math import radians, sin, cos, sqrt, atan2
 
 
+def view_marcacion(request):
+    global ex
+    data = {}
+    add_data_aplication(request, data)
+    usuario_logeado = request.user
+    if Persona.objects.filter(usuario=usuario_logeado, status=True).exists():
+        persona_logeado = Persona.objects.get(usuario=usuario_logeado, status=True)
+    else:
+        persona_logeado = 'SUPERUSUARIO'
+
+    if request.method == 'POST':
+        if 'action' in request.POST:
+            action = request.POST['action']
+
+        return JsonResponse({"success": False, "mensaje": "No se ha encontrado success."})
+    else:
+        if 'action' in request.GET:
+            data['action'] = action = request.GET['action']
+
+        else:
+            try:
+                data['titulo'] = 'Registrar marcada'
+                data['titulo_tabla'] = 'Registrar marcada'
+                data['persona_logeado'] = persona_logeado
+                jornadaasignada = False
+                idpersona = persona_logeado.id
+                jornadaempleado = JornadaEmpleado.objects.filter(status=True, empleado__persona_id=idpersona)
+                if jornadaempleado.exists():
+                    data['jornadaempleado'] = jornadaempleado = jornadaempleado.first()
+                    if jornadaempleado.empleado.coordenadamarcacion:
+                        jornadaasignada = True
+                fechaactual = datetime.now()
+                data['jornadaasignada'] = jornadaasignada
+                data['fechaactual'] = fechaactual
+                return render(request, 'marcar/view.html', data)
+            except Exception as ex:
+                print('Error on line {}'.format(ex.exc_info()[-1].tb_lineno))
+
 @login_required
 def view_marcar(request):
     try:
         jornadaasignada = False
         idpersona = request.session['idpersona']
         jornadaempleado = JornadaEmpleado.objects.filter(status=True, empleado__persona_id=idpersona)
-        jornadaasignada = True if jornadaempleado.exists() else False
+        if jornadaempleado.exists():
+            jornadaempleado = jornadaempleado.first()
+            if jornadaempleado.empleado.coordenadamarcacion:
+                jornadaasignada = True
         fechaactual = datetime.now()
 
         context = {

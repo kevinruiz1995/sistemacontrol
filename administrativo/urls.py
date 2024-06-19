@@ -3,7 +3,7 @@ from django.urls import path
 from administrativo import view_plantillapersonal, view_prestamosalario, views, view_marcar
 from administrativo.view_personas import view_persona
 from administrativo.view_jornada import view
-from administrativo.view_marcar import validarRadio, registrar_marcada
+from administrativo.view_marcar import validarRadio, registrar_marcada, view_marcacion
 from administrativo.view_jornadaempleado import view_jornadaempleado, consultarempleados
 from administrativo.view_plantillapersonal import view_personal
 from administrativo.organizacion import editar_organizacion
@@ -46,7 +46,7 @@ urlpatterns = [
     path('prestamo/prestamos/add', view_prestamosalario.solicitar_prestamo, name='solicitar_prestamo'),
 
     #MÓDULO MARCAR
-    path('marcar/', view_marcar.view_marcar, name='view_marcar'),
+    path('marcar/', view_marcacion, name='view_marcar'),
     path('validarRadio/', validarRadio, name='validarRadio'),
     path('registrar_marcada/', registrar_marcada, name='registrar_marcada'),
 

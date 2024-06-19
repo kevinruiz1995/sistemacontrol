@@ -110,18 +110,18 @@ def add_data_aplication(request,data):
         mis_perfiles = PersonaPerfil.objects.filter(status=True, persona=request.user.persona_set.filter(status=True).first())
         if mis_perfiles:
             tipoperfil = mis_perfiles.first()
-            if tipoperfil.is_administrador == True:
-                grupo_administrativo = Group.objects.filter(name='JEFE DEPARTAMENTAL')
+            if tipoperfil.is_jefe_departamental == True:
+                grupo_jefe = Group.objects.filter(name='JEFE DEPARTAMENTAL')
+                if grupo_jefe:
+                    request.session['tipoperfil'] = grupo_jefe.first().id
+            elif tipoperfil.is_administrador == True:
+                grupo_administrativo = Group.objects.filter(name='ADMINISTRATIVO')
                 if grupo_administrativo:
                     request.session['tipoperfil'] = grupo_administrativo.first().id
-            elif tipoperfil.is_profesor == True:
-                grupo_profesor = Group.objects.filter(name='ADMINISTRATIVO')
-                if grupo_profesor:
-                    request.session['tipoperfil'] = grupo_profesor.first().id
-            elif tipoperfil.is_alumno == True:
-                grupo_alumno = Group.objects.filter(name='EMPLEADO')
-                if grupo_alumno:
-                    request.session['tipoperfil'] = grupo_alumno.first().id
+            elif tipoperfil.is_empleado == True:
+                grupo_empleado = Group.objects.filter(name='EMPLEADO')
+                if grupo_empleado:
+                    request.session['tipoperfil'] = grupo_empleado.first().id
             request.session['perfil_principal'] = model_to_dict(mis_perfiles.first())
         # request.session.save()
 
