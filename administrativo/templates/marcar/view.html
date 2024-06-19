@@ -66,6 +66,62 @@
 
     <script>
 
+        {% if jornadaasignada %}
+            if ("geolocation" in navigator) {
+                // Obtener la ubicación del usuario
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    // Hacer algo con las coordenadas, como enviarlas al servidor
+                    // Puedes utilizar una solicitud AJAX para enviar las coordenadas al servidor
+
+                    // Ejemplo de solicitud AJAX con jQuery
+                    $.ajax({
+                        url: "{% url 'administrativo:validarRadio' %}", // Ruta de tu vista en el servidor
+                        method: "GET",
+                        data: {
+                            latitude: latitude,
+                            longitude: longitude,
+                            id: {{ jornadaempleado.empleado.id }},
+                        },
+                        success: function (data) {
+                            if (data.cumple) {
+                                var formMarcacion = document.getElementById("formMarcacion");
+                                formMarcacion.style.visibility = "visible";
+                                var coordenadasubicacion = document.getElementById("coordenadasubicacion");
+                                coordenadasubicacion.value = latitude + ', ' + longitude;
+                            } else {
+                                var alertaMarcada = document.getElementById("alertaMarcada");
+                                alertaMarcada.style.visibility = "visible";
+                            }
+                        },
+                        error: function () {
+                            console.error("Error al enviar las coordenadas al servidor.");
+                        }
+                    });
+                }, function (error) {
+                    // En caso de error
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            console.log("El usuario denegó la solicitud de geolocalización.");
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            console.log("La información de ubicación no está disponible.");
+                            break;
+                        case error.TIMEOUT:
+                            console.log("Se agotó el tiempo para obtener la ubicación.");
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            console.log("Ocurrió un error desconocido al obtener la ubicación.");
+                            break;
+                    }
+                });
+            } else {
+                console.log("El navegador no admite la geolocalización.");
+            }
+        {% endif %}
+
         function mostrarFechaHora() {
             // Obtiene el elemento donde se mostrará la fecha y hora
             const fechaHoraElemento = document.getElementById('fecha-hora');
@@ -120,31 +176,37 @@
     <div class="col-md-12 mb-lg-0 mb-4">
         <div class="position-relative card mt-1">
             <div class="card-header pb-0 p-3">
-                <!-- Contenido del encabezado de la tarjeta (opcional) -->
+                <div id="alertaMarcada" class="mb-4"
+                     style="margin-top:200px;text-align: center;vertical-align:center;height: 20%;background: transparent;border-style: none;visibility: hidden;{% if not jornadaasignada %}display: none{% endif %}">
+                    <h3 style="color: orange">Te encuentras fuera de rango disponible para marcar</h3>
+                </div>
             </div>
-            <form method="get" action="">
-                <div class="card-header pb-0 p-3">
-                    <!-- Contenido del encabezado del formulario (opcional) -->
-                </div>
-            </form>
-            <div class="card-body p-3" style="text-align:center">
-                <div style="text-align: left;width: 100%">
-                    <h3>Bienvenido, {{ persona_logeado }}</h3>
-                    <b><h4>Mi jornada: </h4> {{ jornadaempleado }}</b>
-                </div>
-                <div class="modal-body d-flex justify-content-center align-items-center"
-                     style="width: 300px; height: 300px; border-radius: 50%; overflow: hidden; position: relative;left: 40%">
-                    <div id="loader-container">
-                        <div id="loader"></div>
+            <div id="formMarcacion" class=""
+                 style="text-align: center;margin-top: -100px;border-style: none;visibility: hidden;{% if not jornadaasignada %}display: none{% endif %}">
+                <form action="/administrativo/registrar_marcada/" id="id_formulario_generico"
+                      class="save-modal-form-generic"
+                      autocomplete="off" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card-body p-3" style="text-align:center">
+                        <div style="text-align: left;width: 100%">
+                            <h3>Bienvenido, {{ persona_logeado }}</h3>
+                            <b><h4>Mi jornada: </h4> {{ jornadaempleado }}</b>
+                        </div>
+                        <div class="modal-body d-flex justify-content-center align-items-center"
+                             style="width: 300px; height: 300px; border-radius: 50%; overflow: hidden; position: relative;left: 40%">
+                            <div id="loader-container">
+                                <div id="loader"></div>
+                            </div>
+                            <video id="video" width="100%" height="100%"
+                                   style="object-fit: cover; border-radius: 50%; position: absolute;"
+                                   autoplay></video>
+                        </div>
+                        <br>
+                        <p><b id="fecha-hora"></b></p>
+                        <button type="submit" class="btn btn-success">Registrar marcada</button>
+                        <a class="btn btn-danger" href="/">Cancelar</a>
                     </div>
-                    <video id="video" width="100%" height="100%"
-                           style="object-fit: cover; border-radius: 50%; position: absolute;"
-                           autoplay></video>
-                </div>
-                <br>
-                <p><b id="fecha-hora"></b></p>
-                <button type="submit" class="btn btn-success">Registrar marcada</button>
-                <a class="btn btn-danger" href="/">Cancelar</a>
+                </form>
             </div>
         </div>
     </div>

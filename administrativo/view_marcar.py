@@ -184,8 +184,9 @@ def validarRadio(request):
         coordenadas_consultadas = (float(request.GET['latitude']), float(request.GET['longitude']))  # Ejemplo de coordenadas cercanas a las configuradas
 
         # Calcular la distancia entre las coordenadas consultadas y las configuradas
-        coordenadas_configuradas = request.session['coordenadas_configuradas']
-        distancia = haversine(coordenadas_configuradas[0], coordenadas_configuradas[1], coordenadas_consultadas[0],
+        empleado = PlantillaPersona.objects.get(id=int(request.GET['id']))
+        coordenadas_empleado = empleado.coordenadamarcacion
+        distancia = haversine(coordenadas_empleado.latitud, coordenadas_empleado.longitud, coordenadas_consultadas[0],
                               coordenadas_consultadas[1])
 
         # Definir un radio de 50 metros
