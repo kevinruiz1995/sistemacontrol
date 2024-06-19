@@ -33,13 +33,13 @@ def view_jornadaempleado(request):
                     with transaction.atomic():
                         form = JornadaEmpleadoForm(request.POST)
                         if form.is_valid():
-                            id_empleado = int(request.POST['id_empleado'])
+                            id_empleado = int(request.POST['empleado'])
                             if id_empleado > 0:
                                 jor_emple = JornadaEmpleado.objects.filter(status=True, empleado_id=id_empleado,
                                                                            jornada=form.cleaned_data['jornada'])
                                 if not jor_emple.exists():
                                     instance = JornadaEmpleado(
-                                        empleado_id=int(request.POST['id_empleado']),
+                                        empleado_id=id_empleado,
                                         jornada=form.cleaned_data['jornada'],
                                     )
                                     instance.save(request)
@@ -58,11 +58,11 @@ def view_jornadaempleado(request):
                     with transaction.atomic():
                         instance = JornadaEmpleado.objects.get(id=int(request.POST['id']))
                         form = JornadaEmpleadoForm(request.POST)
-                        id_empleado = int(request.POST['id_empleado'])
+                        id_empleado = int(request.POST['empleado'])
                         if form.is_valid():
                             if id_empleado > 0:
                                 jorna_emple = JornadaEmpleado.objects.filter(status=True,
-                                                                             empleado_id=id_empleado).exclude(id=instance)
+                                                                             empleado_id=id_empleado).exclude(id=instance.id)
                                 if not jorna_emple.exists():
                                     instance.empleado_id = id_empleado
                                     instance.jornada = form.cleaned_data['jornada']
@@ -92,8 +92,8 @@ def view_jornadaempleado(request):
             data['action'] = action = request.GET['action']
             if action == 'add':
                 try:
-                    data['titulo'] = 'Agregar nuevo empleado'
-                    data['titulo_formulario'] = 'Formulario de registro de empleado'
+                    data['titulo'] = 'Asignar jornada a empleado'
+                    data['titulo_formulario'] = 'Formulario de asignación de jornada'
                     data['persona_logeado'] = persona_logeado
                     form = JornadaEmpleadoForm()
                     data['form'] = form
@@ -107,9 +107,10 @@ def view_jornadaempleado(request):
                     data['titulo'] = 'Editar jornada empleado'
                     data['titulo_formulario'] = 'Formulario de editar jornada empleado'
                     data['action'] = action
-                    instance = JornadaEmpleado.objects.get(id=int(request.GET['id']))
+                    data['filtro'] = instance = JornadaEmpleado.objects.get(id=int(request.GET['id']))
                     form = JornadaEmpleadoForm(initial={
                         'jornada': instance.jornada,
+                        'empleado': instance.empleado,
                     })
                     data['form'] = form
                     data['persona_logeado'] = persona_logeado

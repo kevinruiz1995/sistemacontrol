@@ -60,3 +60,6 @@ class Persona(ModeloBase):
 
     def perfil_empleado(self):
         return self.personaperfil_set.filter(status=True, is_empleado=True).exists()
+
+    def persona_es_empleado(self):
+        return self.plantillapersona_set.filter(status=True, activo=True)

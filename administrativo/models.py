@@ -115,7 +115,7 @@ class PlantillaPersona(ModeloBase):
     activo = models.BooleanField(default=False, verbose_name="Persona trabaja actualmente?")
 
     def __str__(self):
-        return f"{self.persona.__str__()} - Cargo: {self.cargo}"
+        return f"{self.persona.__str__()} - Cargo: {self.cargo if self.cargo else 'Sin asignar'}"
 
     class Meta:
         verbose_name = 'Empleado'

@@ -102,10 +102,10 @@
                                         <span class="dropdown-menu" aria-labelledby="courseDropdown11">
                                         <span class="dropdown-header">Acciones</span>
                                             <a class="dropdown-item" href="Javascript:void(0);"
-                                               onclick="formulario_modal('{% url 'administrativo:editar_detallejornada' detallejornada.pk %}','Editar registro')"><i
+                                               href="?action=editdetalle&id={{ detallejornada.pk }}"><i
                                                     class="fe fe-edit dropdown-item-icon"></i>Editar</a>
                                                 <a class="dropdown-item" href="Javascript:void(0);"
-                                                   onclick="eliminar_con_ajax('{% url 'administrativo:eliminar_detallejornada' detallejornada.pk %}')"><i
+                                                   href="?action=eliminardetalle&id={{ detallejornada.pk }}"><i
                                                         class="fe fe-trash dropdown-item-icon"></i>Eliminar</a>
                                         </span>
                                     </span>

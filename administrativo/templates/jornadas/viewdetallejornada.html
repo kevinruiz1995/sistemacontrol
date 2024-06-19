@@ -15,29 +15,6 @@
                 location.href = url
             });
         })
-
-        function activar_desactivar_perfil(id, tipo, estado) {
-            $.ajax({
-                url: "{% url 'administrativo:activar_desactivar_perfil' %}",
-                type: "POST",
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                    pk: id,
-                    tipo: tipo,
-                    estado: estado,
-                },
-                success: function (data) {
-                    if (data.success) {
-                        message_success_reload(data.message)
-                    } else {
-                        alert(data.message);
-                    }
-                },
-                error: function () {
-                    toast_error("Error en la solicitud AJAX.");
-                }
-            });
-        }
     </script>
 {% endblock %}
 {% block contenido %}

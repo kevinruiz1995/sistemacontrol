@@ -177,14 +177,16 @@
                                                            onclick="activar_desactivar_perfil({{ personal.id }}, 1, 0, 'activar_desactivar_perfil')">Desactivar perfil administrativo</a>
                                                     </li>
                                                 {% endif %}
-                                                {% if not personal.perfil_empleado %}
-                                                    <li><a class="dropdown-item border-radius-md"
-                                                           onclick="activar_desactivar_perfil({{ personal.id }}, 2, 1, 'activar_desactivar_perfil')">Activar perfil empleado</a>
-                                                    </li>
-                                                {% else %}
-                                                    <li><a class="dropdown-item border-radius-md"
-                                                           onclick="activar_desactivar_perfil({{ personal.id }}, 2, 0, 'activar_desactivar_perfil')">Desactivar perfil empleado</a>
-                                                    </li>
+                                                {% if personal.persona_es_empleado %}
+                                                    {% if not personal.perfil_empleado %}
+                                                        <li><a class="dropdown-item border-radius-md"
+                                                               onclick="activar_desactivar_perfil({{ personal.id }}, 2, 1, 'activar_desactivar_perfil')">Activar perfil empleado</a>
+                                                        </li>
+                                                    {% else %}
+                                                        <li><a class="dropdown-item border-radius-md"
+                                                               onclick="activar_desactivar_perfil({{ personal.id }}, 2, 0, 'activar_desactivar_perfil')">Desactivar perfil empleado</a>
+                                                        </li>
+                                                    {% endif %}
                                                 {% endif %}
                                                 <li><a class="dropdown-item border-radius-md"
                                                        href="?action=edit&id={{ personal.pk }}">Editar</a>

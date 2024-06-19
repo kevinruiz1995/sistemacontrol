@@ -81,6 +81,7 @@ class JornadaEmpleadoForm(forms.ModelForm):
         model = JornadaEmpleado
         fields = [
                     'jornada',
+                    'empleado',
                  ]
 
         error_messages = {
@@ -95,6 +96,10 @@ class JornadaEmpleadoForm(forms.ModelForm):
         self.fields['jornada'].widget.attrs.update({'class': 'form-control', 'data-live-search':'true', 'required': 'true', 'col': 'col-md-12'})
 
         self.fields['jornada'].queryset = JornadaLaboral.objects.filter(status=True)
+
+        self.fields['empleado'].widget.attrs.update({'class': 'form-control', 'data-live-search': 'true', 'required': 'true', 'col': 'col-md-12'})
+
+        self.fields['empleado'].queryset = PlantillaPersona.objects.filter(status=True, activo=True)
 
 
 class DatosOrganizacionForm(forms.ModelForm):
