@@ -2,6 +2,8 @@
 {% load static %}
 {% load funciones_especiales %}
 {% block head %}
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <style>
         /* static/css/modal.css */
         #modalCamara {
@@ -60,10 +62,36 @@
                 transform: rotate(360deg);
             }
         }
-
     </style>
 
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
 
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        /* Estilos para el mapa */
+        #mapa {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
     <script>
 
         {% if jornadaasignada %}
@@ -90,7 +118,12 @@
                                 var formMarcacion = document.getElementById("formMarcacion");
                                 formMarcacion.style.visibility = "visible";
                                 var coordenadasubicacion = document.getElementById("coordenadasubicacion");
+                                var a_coordenadasubicacion = document.getElementById("a_coordenadasubicacion");
                                 coordenadasubicacion.value = latitude + ', ' + longitude;
+                                a_coordenadasubicacion.text = latitude + ', ' + longitude;
+                                a_coordenadasubicacion.style.color = "blue";
+                                var alertaMarcada = document.getElementById("alertaMarcada");
+                                alertaMarcada.style.marginTop = "30px";
                             } else {
                                 var alertaMarcada = document.getElementById("alertaMarcada");
                                 alertaMarcada.style.visibility = "visible";
@@ -172,12 +205,17 @@
     </script>
 {% endblock %}
 {% block contenido %}
-
+    <div id="modalMapa" class="modal">
+        <div class="modal-content" style="text-align: right">
+            <span id="cerrarModal" style="cursor: pointer;margin-right:10px">&times;</span>
+            <div id="mapa" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
     <div class="col-md-12 mb-lg-0 mb-4">
         <div class="position-relative card mt-1">
             <div class="card-header pb-0 p-3">
-                <div id="alertaMarcada" class="mb-4"
-                     style="margin-top:200px;text-align: center;vertical-align:center;height: 20%;background: transparent;border-style: none;visibility: hidden;{% if not jornadaasignada %}display: none{% endif %}">
+                <div id="alertaMarcada" class=""
+                     style="margin-top:200px;text-align: center;vertical-align:center;height: 5%;background: transparent;border-style: none;visibility: hidden;">
                     <h3 style="color: orange">Te encuentras fuera de rango disponible para marcar</h3>
                 </div>
             </div>
@@ -202,6 +240,13 @@
                                    autoplay></video>
                         </div>
                         <br>
+                        <div class="mb-3" style="text-align: center">
+                            <label for="coordenadasubicacion" class="form-label"
+                                   style="font-size: 22px">Ubicación</label><br>
+                            <input type="hidden" style="text-align: center" name="coordenadasubicacion" readonly
+                                   class="form-control" id="coordenadasubicacion">
+                            <a id="a_coordenadasubicacion" style="cursor: pointer;"></a>
+                        </div>
                         <p><b id="fecha-hora"></b></p>
                         <button type="submit" class="btn btn-success">Registrar marcada</button>
                         <a class="btn btn-danger" href="/">Cancelar</a>
@@ -218,7 +263,55 @@
 {% endblock %}
 
 {% block script %}
-    <script type="text/javascript">
+    <script>
 
+        const abrirModalButton = document.getElementById("a_coordenadasubicacion");
+        const modalMapa = document.getElementById("modalMapa");
+        const cerrarModal = document.getElementById("cerrarModal");
+        var coordenadasubicacion = document.getElementById("coordenadasubicacion");
+        let mapa; // Variable para el objeto de mapa
+
+        function inicializarMapa(latitud, longitud) {
+            if (mapa) {
+                mapa.remove();
+            }
+
+            // Inicializar el mapa cuando se abre el modal
+            mapa = L.map('mapa').setView([latitud, longitud], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(mapa);
+
+            // Agregar un marcador en la ubicación deseada
+            L.marker([latitud, longitud]).addTo(mapa);
+        }
+
+        abrirModalButton.addEventListener("click", function () {
+            modalMapa.style.display = "block";
+            coordenadasubicacion = coordenadasubicacion.value;
+            const partes = coordenadasubicacion.split(", ");
+            var latitud = partes[0];
+            var longitud = partes[1];
+            inicializarMapa(parseFloat(latitud), parseFloat(longitud));
+
+            // Inicializar el mapa cuando se abre el modal
+            mapa = L.map('mapa').setView([parseFloat(latitud), parseFloat(longitud)], 13);
+
+            // Agregar una capa de mapa
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(mapa);
+
+            // Agregar un marcador en la ubicación deseada
+            const marcador = L.marker([parseFloat(latitud), parseFloat(longitud)]).addTo(mapa);
+
+            // Puedes personalizar el marcador, por ejemplo, cambiando su icono
+            marcador.bindPopup("Ubicación").openPopup();
+        });
+
+        cerrarModal.addEventListener("click", function () {
+            modalMapa.style.display = "none";
+            // Destruir el mapa cuando se cierra el modal
+        });
     </script>
 {% endblock %}
