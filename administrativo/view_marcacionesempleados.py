@@ -62,6 +62,7 @@ def view_marcacionempleado(request):
                     filtro = (Q(status=True) & Q(empleado_id=empleado.id))
                     if 'mes' in request.GET:
                         mes = int(request.GET['mes'])
+                        data['mes_'] = int(request.GET['mes'])
                         ruta_paginado += "?mes_=" + request.GET['mes'] + "&"
                         filtro = filtro & Q(fecha_hora__month=mes)
                     lista = RegistroEntradaSalidaDiario.objects.filter(filtro).order_by('fecha_hora__day')
