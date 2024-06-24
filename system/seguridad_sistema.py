@@ -7,6 +7,8 @@ def control_entrada_modulos(f):
     def new_f(*args, **kwargs):
         request = args[0]
         if request.user.is_authenticated:
+            if request.user.is_superuser:
+                return f(request)
             if 'tipoperfil' in request.session:
                 tipogrupo = request.session['tipoperfil']
                 menu = AccesoModulo.objects.values_list('modulo_id').filter(status=True, activo=True, grupo__id=tipogrupo)

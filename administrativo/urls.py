@@ -8,7 +8,7 @@ from administrativo.view_jornadaempleado import view_jornadaempleado, consultare
 from administrativo.view_plantillapersonal import view_personal
 from administrativo.organizacion import editar_organizacion
 from administrativo.view_mismarcaciones import listar_mismarcaciones
-from administrativo.view_marcacionesempleados import listar_personasmarcaciones, listar_marcacionesempleado
+from administrativo.view_marcacionesempleados import view_marcacionempleado, listar_marcacionesempleado
 from administrativo.view_mibiografia import mibiografia, datos_familiares, crear_datosfamiliares, editar_datosfamiliares, \
     eliminar_datosfamiliares, editar_mibiografia, mis_marcadas
 from administrativo.conf_acceso_modulo import view_acceso_modulo
@@ -64,7 +64,7 @@ urlpatterns = [
     path('mismarcaciones/', listar_mismarcaciones, name='listar_mismarcaciones'),
 
     #MÓDULO MARCACIONES DE EMPLEADOS
-    path('marcadasempleado/', listar_personasmarcaciones, name='listar_personasmarcaciones'),
+    path('marcadasempleado/', view_marcacionempleado, name='listar_personasmarcaciones'),
     path('marcacionesempleado/<int:id>/', listar_marcacionesempleado, name='listar_marcacionesempleado'),
 
     #MÓDULO MI BIOGRAFÍA

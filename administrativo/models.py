@@ -135,6 +135,7 @@ class PlantillaPersona(ModeloBase):
         verbose_name = 'Empleado'
         verbose_name_plural = 'Empleados'
 
+
     def total_marcadas(self):
         registro_diario = RegistroEntradaSalidaDiario.objects.filter(status=True, empleado=self).values_list('id', flat=True)
         total_marcadas = DetalleRegistroEntradaSalida.objects.filter(status=True, dia_id__in=registro_diario).count()
