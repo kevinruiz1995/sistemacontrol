@@ -10,38 +10,51 @@ from core.core import meses
 from administrativo.forms import PlantillaPersonalForm
 from administrativo.models import RegistroEntradaSalidaDiario, MOTIVO_MARCACION
 from system.seguridad_sistema import control_entrada_modulos
+from baseapp.funciones import add_data_aplication
+from baseapp.models import Persona
 
 
 @login_required
 @control_entrada_modulos
 @transaction.atomic()
-def listar_mismarcaciones(request,search=None):
-    try:
-        marcaciones, mes, parametros = [], None, ''
-        mes = None
-        if 'mes' in request.GET:
-            mes = int(request.GET['mes'])
-            parametros += '&mes=' + str(mes)
-            marcaciones = RegistroEntradaSalidaDiario.objects.filter(status=True, empleado__persona_id=request.session['idpersona'], fecha_hora__month=mes).order_by('fecha_hora__day')
-        paginator = Paginator(marcaciones, 25)
-        page = request.GET.get('page')
-        try:
-            page_object = paginator.page(page)
-        except PageNotAnInteger:
-            page_object = paginator.page(1)
-        except EmptyPage:
-            page_object = paginator.page(paginator.num_pages)
+def view_mismarcaciones(request):
+    global ex
+    data = {}
+    add_data_aplication(request, data)
+    usuario_logeado = request.user
+    if Persona.objects.filter(usuario=usuario_logeado, status=True).exists():
+        persona_logeado = Persona.objects.get(usuario=usuario_logeado, status=True)
+    else:
+        persona_logeado = 'SUPERUSUARIO'
 
-        context = {
-            'page_object': page_object,
-            'page_titulo': "Mis marcaciones",
-            'titulo': "Mis marcaciones",
-            'MOTIVO_MARCACION': MOTIVO_MARCACION,
-            'meses': meses,
-            'mes_': mes,
-            'parametros': parametros,
-        }
-        return render(request, 'mismarcaciones/inicio.html', context)
-    except Exception as e:
-        HttpResponseRedirect(f"/?info={e.__str__()}")
+    if request.method == 'POST':
+        if 'action' in request.POST:
+            action = request.POST['action']
 
+        return JsonResponse({"success": False, "mensaje": "No se ha encontrado success."})
+    else:
+        if 'action' in request.GET:
+            data['action'] = action = request.GET['action']
+
+        else:
+            try:
+                data['titulo'] = 'Mis marcaciones'
+                data['titulo_tabla'] = 'Mis marcaciones'
+                data['persona_logeado'] = persona_logeado
+                ruta_paginado = request.path
+                resultados = []
+                if 'mes' in request.GET:
+                    mes = int(request.GET['mes'])
+                    data['mes_'] = int(request.GET['mes'])
+                    ruta_paginado += "?mes_=" + request.GET['mes'] + "&"
+                    resultados = RegistroEntradaSalidaDiario.objects.filter(status=True, empleado__persona_id=request.session['idpersona'], fecha_hora__month=mes).order_by('fecha_hora__day')
+                lista = resultados
+                paginator = Paginator(lista, 25)
+                page_number = request.GET.get('page')
+                page_obj = paginator.get_page(page_number)
+                data['page_obj'] = page_obj
+                data['MOTIVO_MARCACION'] = MOTIVO_MARCACION
+                data['meses'] = meses
+                return render(request, "mismarcaciones/view.html", data)
+            except Exception as ex:
+                print('Error on line {}'.format(ex.exc_info()[-1].tb_lineno))

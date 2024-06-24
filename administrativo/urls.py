@@ -7,7 +7,7 @@ from administrativo.view_marcar import validarRadio, registrar_marcada, view_mar
 from administrativo.view_jornadaempleado import view_jornadaempleado, consultarempleados
 from administrativo.view_plantillapersonal import view_personal
 from administrativo.organizacion import editar_organizacion
-from administrativo.view_mismarcaciones import listar_mismarcaciones
+from administrativo.view_mismarcaciones import view_mismarcaciones
 from administrativo.view_marcacionesempleados import view_marcacionempleado, listar_marcacionesempleado
 from administrativo.view_mibiografia import mibiografia, datos_familiares, crear_datosfamiliares, editar_datosfamiliares, \
     eliminar_datosfamiliares, editar_mibiografia, mis_marcadas
@@ -61,7 +61,7 @@ urlpatterns = [
     path('confcoordenadas/', view_configuracioncoordenada, name='confcoordenadas'),
 
     #MÓDULO MIS MARCACIONES
-    path('mismarcaciones/', listar_mismarcaciones, name='listar_mismarcaciones'),
+    path('mismarcaciones/', view_mismarcaciones, name='listar_mismarcaciones'),
 
     #MÓDULO MARCACIONES DE EMPLEADOS
     path('marcadasempleado/', view_marcacionempleado, name='listar_personasmarcaciones'),
