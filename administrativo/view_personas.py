@@ -1,3 +1,4 @@
+import base64
 import datetime
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -148,6 +149,24 @@ def view_persona(request):
                     return JsonResponse({'success': True, 'message': 'Acción realizada con éxito'})
                 except PersonaPerfil.DoesNotExist:
                     return JsonResponse({'success': False, 'message': 'El registro no existe'})
+
+            if action == 'registrarreconocimiento':
+                try:
+                    from django.core.files.base import ContentFile
+                    imagen_base64 = request.POST.get('imagen', None)
+                    idpersona = request.POST.get('idpersona', None)
+                    persona_registro = Persona.objects.get(id=idpersona)
+                    usuario = persona_registro.usuario
+
+                    #Decodifica la imagen desde base64
+                    imagen_decodificada = base64.b64decode(imagen_base64.split(',')[1])
+
+                    #Obtén el usuario actual y guarda la imagen en el campo 'imagen'
+                    usuario.imagen.save(f'{usuario.username}_imagen.jpg', ContentFile(imagen_decodificada), save=True)
+
+                    return JsonResponse({"success": True, 'message': 'Imagen guardada con éxito'})
+                except Exception as ex:
+                    pass
 
         return JsonResponse({"success": False, "mensaje": "No se ha encontrado success."})
     else:

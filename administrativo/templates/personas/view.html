@@ -4,6 +4,73 @@
 {% block head %}
     <script>
 
+        function inicializarCamara(){
+            var video = document.getElementById('video');
+
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+                navigator.mediaDevices.getUserMedia({video: true})
+                .then(function (stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.error('Error')
+                })
+            }else{
+                console.error('Error')
+            }
+        }
+
+        function abrirModal(idpersona){
+            $("#idpersona").val(idpersona);
+            var miModal = new bootstrap.Modal(document.getElementById('miModal'))
+            miModal.show();
+            inicializarCamara();
+        }
+
+        function capturarImagen() {
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            var video = document.getElementById('video');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Obtener la imagen en formato base64 desde el canvas
+            var imageData = canvas.toDataURL('image/jpeg');
+            var idpersona = $("#idpersona").val();
+
+            // Enviar la imagen al backend utilizando AJAX
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                type: 'POST',
+                url: "{{ request.path }}",  // Ajusta la URL según tu configuración
+                data: {
+                    action: 'registrarreconocimiento',
+                    imagen: imageData,
+                    idpersona: idpersona,
+                    // Puedes enviar otros datos si es necesario
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                },
+                success: function (response) {
+                    if (response.success === true) {
+                        location.reload()
+                    } else {
+                        alert(response.message)
+                    }
+                    // Puedes realizar acciones adicionales si es necesario
+                },
+                error: function (error) {
+                    console.error('Error al enviar la imagen al servidor:', error);
+                }
+            });
+
+            // Cerrar el modal después de capturar y enviar la imagen
+            var miModal = new bootstrap.Modal(document.getElementById('miModal'));
+            miModal.hide();
+        }
+
         $(function () {
             $("#buscar").click(function () {
                 var term = $("#buscarinfo").val().trim().toUpperCase();
@@ -48,6 +115,30 @@
     </script>
 {% endblock %}
 {% block contenido %}
+
+    <div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <input id="idpersona" type="hidden" value="0">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Reconocimiento facial
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <video id="video" width="100%" height="auto" autoplay></video>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="cerrarModal()">
+                        Cerrar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="capturarImagen()">Capturar Imagen</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="col-md-12 mb-lg-0 mb-4 ">
         <div class="position-relative  card mt-1 ">
@@ -190,6 +281,9 @@
                                                 {% endif %}
                                                 <li><a class="dropdown-item border-radius-md"
                                                        href="?action=edit&id={{ personal.pk }}">Editar</a>
+                                                </li>
+                                                <li><a class="dropdown-item border-radius-md"
+                                                       onclick="abrirModal({{ personal.id }})">Registrar reconocimiento facial</a>
                                                 </li>
 
                                                 <li>
