@@ -1,3 +1,4 @@
+import base64
 import datetime
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,8 @@ from administrativo.models import PlantillaPersona, Persona, JornadaLaboral, Reg
 from geopy.geocoders import Nominatim
 from math import radians, sin, cos, sqrt, atan2
 from system.seguridad_sistema import control_entrada_modulos
+from django.core.files.base import ContentFile
+from authentication.views import comparar_rasgos
 
 @login_required()
 @control_entrada_modulos
@@ -84,6 +87,25 @@ def registrar_marcada(request):
             fechaactual = datetime.now()
             dia = fechaactual.weekday() + 1
             idpersona = request.session['idpersona']
+
+            persona_a_marcar = Persona.objects.get(id=int(idpersona))
+
+            if not persona_a_marcar.usuario:
+                return JsonResponse({'success': False, 'errors': "No cuenta con usuario"})
+
+            if not persona_a_marcar.usuario.imagen:
+                return JsonResponse({'success': False, 'errors': "No cuentas con imagen cargada en el sistema"})
+
+            rostro = request.POST.get('imagen', None)
+            if not rostro:
+                return JsonResponse({'success': False, 'errors': "Error al verificar"})
+
+            rostro_decodificado = base64.b64decode(rostro.split(',')[1])
+
+            imagen = ContentFile(rostro_decodificado)
+            if not comparar_rasgos(imagen, persona_a_marcar.usuario.imagen):
+                return JsonResponse({'success': False, 'errors': "Reconocimiento facial fallido"})
+
             coordenadasubicacion = request.POST['coordenadasubicacion']
             empleado = PlantillaPersona.objects.filter(status=True, activo=True, persona_id=idpersona)
             if empleado.exists():

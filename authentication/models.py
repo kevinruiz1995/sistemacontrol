@@ -23,6 +23,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    imagen = models.FileField(upload_to='imagen_reconocimiento/', blank=True, null=True)
 
     objects = CustomUserManager()
 

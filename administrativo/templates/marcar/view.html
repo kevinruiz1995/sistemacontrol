@@ -202,6 +202,58 @@
             inicializarCamara();
             mostrarFechaHora();
         })
+
+        function registrarMarcada() {
+            var coordenadasubicacion = $("#coordenadasubicacion").val();
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            var video = document.getElementById('video');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Obtener la imagen en formato base64 desde el canvas
+            var imageData = canvas.toDataURL('image/jpeg');
+            // Enviar la imagen al backend utilizando AJAX
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'administrativo:registrar_marcada' %}",  // Ajusta la URL según tu configuración
+                data: {
+                    imagen: imageData,
+                    coordenadasubicacion: coordenadasubicacion,
+                    // Puedes enviar otros datos si es necesario
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                },
+                success: function (response) {
+                    if (response.success === true) {
+                        location.reload();
+                    } else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'warning',
+                            title: response.errors,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                    // Puedes realizar acciones adicionales si es necesario
+                },
+                error: function (error) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Error al enviar la imagen al servidor',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    console.error('Error al enviar la imagen al servidor:', error);
+                }
+            });
+
+        }
     </script>
 {% endblock %}
 {% block contenido %}
@@ -237,7 +289,7 @@
                             </div>
                             <video id="video" width="100%" height="100%"
                                    style="object-fit: cover; border-radius: 50%; position: absolute;"
-                                   autoplay></video>
+                                   autoplay name="fotopersona"></video>
                         </div>
                         <br>
                         <div class="mb-3" style="text-align: center">
@@ -248,7 +300,7 @@
                             <a id="a_coordenadasubicacion" style="cursor: pointer;"></a>
                         </div>
                         <p><b id="fecha-hora"></b></p>
-                        <button type="submit" class="btn btn-success">Registrar marcada</button>
+                        <button type="button" class="btn btn-success" onclick="registrarMarcada()">Registrar marcada</button>
                         <a class="btn btn-danger" href="/">Cancelar</a>
                     </div>
                 </form>
