@@ -92,6 +92,22 @@
             height: 400px;
         }
     </style>
+
+    <style>
+        #escaneando {
+            display: none;
+            position: fixed;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 24px;
+            border-radius: 10px;
+            z-index: 1000;
+    </style>
+
     <script>
 
         {% if jornadaasignada %}
@@ -203,7 +219,16 @@
             mostrarFechaHora();
         })
 
+        function mostrarEscaneando() {
+            document.getElementById('escaneando').style.display = 'block';
+        }
+
+        function ocultarEscaneando() {
+            document.getElementById('escaneando').style.display = 'none';
+        }
+
         function registrarMarcada() {
+            mostrarEscaneando();
             var coordenadasubicacion = $("#coordenadasubicacion").val();
             var canvas = document.createElement('canvas');
             var context = canvas.getContext('2d');
@@ -228,6 +253,7 @@
                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
                 },
                 success: function (response) {
+                    ocultarEscaneando();
                     if (response.success === true) {
                         location.reload();
                     } else {
@@ -242,6 +268,7 @@
                     // Puedes realizar acciones adicionales si es necesario
                 },
                 error: function (error) {
+                    ocultarEscaneando();
                     Swal.fire({
                         position: 'top-end',
                         icon: 'warning',
@@ -257,6 +284,7 @@
     </script>
 {% endblock %}
 {% block contenido %}
+    <div id="escaneando">Escaneando...</div>
     <div id="modalMapa" class="modal">
         <div class="modal-content" style="text-align: right">
             <span id="cerrarModal" style="cursor: pointer;margin-right:10px">&times;</span>
@@ -283,7 +311,7 @@
                             <b><h4>Mi jornada: </h4> {{ jornadaempleado }}</b>
                         </div>
                         <div class="modal-body d-flex justify-content-center align-items-center"
-                             style="width: 300px; height: 300px; border-radius: 50%; overflow: hidden; position: relative;left: 40%">
+                             style="width: 300px; height: 300px; border-radius: 50%; overflow: hidden; position: relative;left: 38%">
                             <div id="loader-container">
                                 <div id="loader"></div>
                             </div>
