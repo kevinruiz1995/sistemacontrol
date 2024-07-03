@@ -104,7 +104,7 @@ def registrar_marcada(request):
 
             imagen = ContentFile(rostro_decodificado)
             if not comparar_rasgos(imagen, persona_a_marcar.usuario.imagen):
-                return JsonResponse({'success': False, 'errors': "Reconocimiento facial fallido"})
+                return JsonResponse({'success': False, 'errors': "Por favor, mire fijamente hacia la cámara"})
 
             coordenadasubicacion = request.POST['coordenadasubicacion']
             empleado = PlantillaPersona.objects.filter(status=True, activo=True, persona_id=idpersona)

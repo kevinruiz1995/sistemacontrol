@@ -17,7 +17,8 @@ def extraer_landmarks(imagen):
     # Inicializa el detector de rostros de dlib (HOG)
     detector_rostros = dlib.get_frontal_face_detector()
     # Inicializa el predictor de landmarks de dlib
-    predictor_landmarks = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")  # Ajusta la ruta al archivo de landmarks
+    predictor_landmarks = dlib.shape_predictor(
+        "shape_predictor_68_face_landmarks.dat")  # Ajusta la ruta al archivo de landmarks
 
     # Convierte la imagen a escala de grises
     imagen_gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
@@ -46,14 +47,15 @@ def comparar_rasgos(imagen1, imagen2):
 
     # Comprueba si se pudieron extraer landmarks de ambas imágenes
     if landmarks1 is not None and landmarks2 is not None:
-        # Puedes realizar comparaciones entre los landmarks según tus necesidades
-        # Por ejemplo, podrías calcular la distancia euclidiana entre los puntos
+        # Alinear y normalizar los landmarks
+        landmarks1 = normalizar_landmarks(landmarks1)
+        landmarks2 = normalizar_landmarks(landmarks2)
 
         # Calcula la distancia euclidiana entre los landmarks de ambas imágenes
         distancia = np.linalg.norm(landmarks1 - landmarks2)
 
         # Define un umbral (ajústalo según tus necesidades)
-        umbral_distancia = 1000
+        umbral_distancia = 0.7  # Este umbral debe ajustarse con experimentación
 
         # Compara la distancia con el umbral
         if distancia < umbral_distancia:
@@ -62,6 +64,13 @@ def comparar_rasgos(imagen1, imagen2):
             return False  # Rostros diferentes
     else:
         return False  # No se pudieron extraer landmarks de una o ambas imágenes
+
+
+def normalizar_landmarks(landmarks):
+    # Normaliza los landmarks para que tengan media 0 y varianza 1
+    landmarks = landmarks - np.mean(landmarks, axis=0)
+    landmarks = landmarks / np.std(landmarks, axis=0)
+    return landmarks
 
 # Función para comparar imágenes
 def comparar_imagenes(img1, img2):
