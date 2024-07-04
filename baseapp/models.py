@@ -41,6 +41,32 @@ class Persona(ModeloBase):
         verbose_name = u'Persona'
         verbose_name_plural = u'Personas'
 
+    def calculate_username(self, variant=1):
+        persona = self
+        alfabeto = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                    'u',
+                    'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        s = persona.nombres.lower().split(' ')
+        while '' in s:
+            s.remove('')
+        if persona.apellido2:
+            usernamevariant = s[0][0] + persona.apellido1.lower() + persona.apellido2.lower()[0]
+        else:
+            usernamevariant = s[0][0] + persona.apellido1.lower()
+        usernamevariant = usernamevariant.replace(' ', '').replace(u'ñ', 'n').replace(u'á', 'a').replace(u'é',
+                                                                                                         'e').replace(
+            u'í', 'i').replace(u'ó', 'o').replace(u'ú', 'u')
+        usernamevariantfinal = ''
+        for letra in usernamevariant:
+            if letra in alfabeto:
+                usernamevariantfinal += letra
+        if variant > 1:
+            usernamevariantfinal += str(variant)
+        if not CustomUser.objects.filter(username=usernamevariantfinal).exclude(persona=persona).exists():
+            return usernamevariantfinal
+        else:
+            return calculate_username(self, variant + 1)
+
     def __str__(self):
         return f"{self.nombres} {self.apellido1} {self.apellido2}"
 

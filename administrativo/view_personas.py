@@ -65,7 +65,7 @@ def view_persona(request):
                             identificacion = instance.ruc
                         password = identificacion.replace(' ', '')
                         password = password.lower()
-                        username = form.cleaned_data['nombres'].replace(' ', '').lower()  # Eliminar espacios y líneas nuevas
+                        username = instance.calculate_username()
                         usuario = CustomUser.objects.create_user(username, password)
                         usuario.save()
                         instance.usuario = usuario
