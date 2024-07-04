@@ -78,7 +78,8 @@ def view_modulo(request):
                         if form.cleaned_data['logo']:
                             modulo.logo = form.cleaned_data['logo']
                         else:
-                            modulo.logo = request.POST['imagen_url_name']
+                            if 'imagen_url_name' in request.POST:
+                                modulo.logo = request.POST['imagen_url_name']
                         modulo.url_name = form.cleaned_data['url_name']
                         modulo.activo = form.cleaned_data['activo']
                         modulo.save(request)

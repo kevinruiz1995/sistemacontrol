@@ -74,53 +74,56 @@
 {% block contenido %}
     <div class="accordion" id="accordionMenu">
         {% for categoria in categoriasmodulo %}
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="categoria{{ categoria.id }}">
-                    <button class="rounded-3 accordion-button accordion-btn-white fs-5 px-3 {% if not forloop.first %}collapsed{% endif %}" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#categoriaMenu{{ categoria.id }}"
-                            aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
-                            aria-controls="categoriaMenu{{ categoria.id }}" style="background: #344767">
-                        <b class="" style="color: white">
-                            <i class="{{ categoria.icono }} fs-3 me-2"></i> {{ categoria.nombre }}
-                        </b>
-                    </button>
-                </h2>
-                <div id="categoriaMenu{{ categoria.id }}"
-                     class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
-                     aria-labelledby="categoria{{ categoria.id }}" data-bs-parent="#accordionMenu">
-                    <div class="accordion-body">
-                        <div class="containerMenuFavoritos">
-                            <div class="row">
-                                <div class="col">
-                                    {% if request.user.is_superuser %}
-                                        {% setvar categoria.todos_los_modulos as listmodulos %}
-                                    {% else %}
-                                        {% setvar categoria|args:persona_logeado|args:tg|call:"mismodulos" as listmodulos %}
-                                    {% endif %}
-                                    {% for modulo in listmodulos %}
-                                        <div class="contenidoitem">
-                                            <div class="icono" url="{{ modulo.url_name }}">
-                                                <div class="iconoimagen">
-                                                    <div class="padding">
-                                                        <img src="/media/{{ modulo.logo }}" alt="Icono del módulo">
+            {% setvar categoria|args:request|args:tg|call:"tienemodulos" as tienemodulos %}
+            {% if tienemodulos %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="categoria{{ categoria.id }}">
+                        <button class="rounded-3 accordion-button accordion-btn-white fs-5 px-3 {% if not forloop.first %}collapsed{% endif %}" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#categoriaMenu{{ categoria.id }}"
+                                aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                                aria-controls="categoriaMenu{{ categoria.id }}" style="background: #344767">
+                            <b class="" style="color: white">
+                                <i class="{{ categoria.icono }} fs-3 me-2"></i> {{ categoria.nombre }}
+                            </b>
+                        </button>
+                    </h2>
+                    <div id="categoriaMenu{{ categoria.id }}"
+                         class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                         aria-labelledby="categoria{{ categoria.id }}" data-bs-parent="#accordionMenu">
+                        <div class="accordion-body">
+                            <div class="containerMenuFavoritos">
+                                <div class="row">
+                                    <div class="col">
+                                        {% if request.user.is_superuser %}
+                                            {% setvar categoria.todos_los_modulos as listmodulos %}
+                                        {% else %}
+                                            {% setvar categoria|args:persona_logeado|args:tg|call:"mismodulos" as listmodulos %}
+                                        {% endif %}
+                                        {% for modulo in listmodulos %}
+                                            <div class="contenidoitem">
+                                                <div class="icono" url="{{ modulo.url_name }}">
+                                                    <div class="iconoimagen">
+                                                        <div class="padding">
+                                                            <img src="/media/{{ modulo.logo }}" alt="Icono del módulo">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="icononombre">
-                                                    <div class="padding">
-                                                        <h4 class="tituloicono">{{ modulo.nombre }}</h4>
-                                                        <span class="iconodescripcion">{{ modulo.descripcion }}</span>
+                                                    <div class="icononombre">
+                                                        <div class="padding">
+                                                            <h4 class="tituloicono">{{ modulo.nombre }}</h4>
+                                                            <span class="iconodescripcion">{{ modulo.descripcion }}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    {% endfor %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <br>
+                <br>
+            {% endif %}
         {% endfor %}
     </div>
 
