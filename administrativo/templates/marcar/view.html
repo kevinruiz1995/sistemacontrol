@@ -255,7 +255,13 @@
                 success: function (response) {
                     ocultarEscaneando();
                     if (response.success === true) {
-                        location.reload();
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                     } else {
                         Swal.fire({
                             position: 'top-end',

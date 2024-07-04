@@ -161,7 +161,7 @@ def registrar_marcada(request):
                         transaction.set_rollback(True)
                         return JsonResponse({'success': False, 'errors': "Todas las marcadas ya fueron registradas"})
 
-                    return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
+                    return JsonResponse({'success': True, 'message': 'Marcación registrada con éxito!'})
                 else:
                     transaction.set_rollback(True)
                     return JsonResponse({'success': False, 'errors': "No cuenta con jornada laboral asignada"})
