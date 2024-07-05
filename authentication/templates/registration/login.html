@@ -1,24 +1,37 @@
 {% extends 'baselogin.html' %}
 {% load static %}
+<style>
+</style>
 {% block contenido %}
     <section class="vh-100" style="margin-top: 90px;">
         <div class="container-fluid h-custom">
             <div class="row d-flex justify-content-center align-items-center h-100">
 
-                <div class="col-md-8 col-lg-6 col-xl-4" style="text-align: center">
-                    <div style="display: flex">
-                        <div style="background: #17385A;height: 50px;margin:0px;width: 39%;border-top-right-radius: 5px;border-top-left-radius: 5px;
-                         vertical-align: center;color: white;font-size: 13px;padding-top: 10px;margin-bottom: -10px;position: relative;z-index: 3;">
-                            <i class="fa fa-user" style="margin-right: 4px"></i> INICIO DE SESIÓN
-                        </div>
-{#                        <div class="col-md-9 col-lg-6 col-xl-5" style="margin-left: 120px">#}
-{#                            <img src="{% static 'img/geniuspro.png' %}"#}
-{#                                 class="img-fluid" alt="Sample image"#}
-{#                                 style="width: 200px;margin-top: -50px;max-height: 150px">#}
-{#                        </div>#}
+                <div class="col-md-8 col-lg-6 col-xl-4" style="text-align: center;">
+                    <div style="display: flex;text-align:center;justify-content:center;align-items: center">
+                        <div style="margin-bottom: -80px;background: #17385A;
+                                height: 130px;
+                                width: 130px; /* Ancho igual al alto para hacer un círculo */
+                                border-radius: 50%; /* Hace que el borde sea un círculo */
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                color: white;
+                                font-size: 60px; /* Ajusta el tamaño del ícono */
+                                position: relative;
+                                z-index: 3;">
+                        <i class="fa fa-user"></i>
                     </div>
-                    <form style="text-align: center;width: 100%;border-style: solid;border-width: 1px;margin-top: 80px;background: white;border-color: white;border-radius: 5px;margin-top: 0px">
-                        <div style="background: #17385A;height: 10px;margin:0px;width: 100%;border-top-left-radius: 5px;border-top-right-radius: 5px;margin-bottom: 20px;"></div>
+
+
+                        {#                        <div class="col-md-9 col-lg-6 col-xl-5" style="margin-left: 120px">#}
+                        {#                            <img src="{% static 'img/geniuspro.png' %}"#}
+                        {#                                 class="img-fluid" alt="Sample image"#}
+                        {#                                 style="width: 200px;margin-top: -50px;max-height: 150px">#}
+                        {#                        </div>#}
+                    </div>
+                    <form style="text-align: center;width: 100%;margin-top: 80px;background: rgba(135, 206, 250, 0.2);box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);border-color: rgba(220, 219, 219, 0.6);border-radius: 30px;margin-top: 0px">
+
                         {#                        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">#}
                         {#                            <p class="lead fw-normal mb-0 me-3"></p>#}
                         {#                        </div>#}
@@ -27,34 +40,37 @@
                         {#                            <p class="text-center fw-bold mx-3 mb-0">Bienvenido</p>#}
                         {#                        </div>#}
                         <!-- Email input -->
-                        <div class="form-outline mb-4" style="text-align: left;margin-left: 20px;margin-right: 20px;">
-                            <label class="form-label" for="form3Example3">Usuario</label>
-                            <input style="border-style: solid; border-width: 1px;border-color: gray;border-radius: 4px"
+                        <br>
+                        <br>
+                        <br>
+                        <div class=" row-fluid text-center" style="display: flex;padding:40px">
+                            <i class="fa fa-user"
+                               style="background: #17385A;color:white;vertical-align:center;width:15%;padding-top: 14px;"></i>
+                            <input style="border-style: solid; border-width: 1px;border-color: gray;border-radius: 0px;width: 90%;background: #275976"
                                    type="text" id="id_usuario" class="form-control form-control-lg"
-                                   placeholder="usuario"/>
+                                   placeholder="Usuario"/>
                         </div>
                         <!-- Password input -->
-                        <div class="form-outline mb-3" style="text-align: left;margin-left: 20px;margin-right: 20px">
-                            <label class="form-label" for="form3Example4">Contraseña</label>
-                            <input style="border-style: solid; border-width: 1px;border-color: gray;border-radius: 4px"
+                        <div class="row-fluid text-center" style="display: flex;padding:40px;margin-top:-65px">
+                            <i class="fa fa-lock"
+                               style="background: #17385A;color:white;vertical-align:center;width:15%;padding-top: 14px;"></i>
+                            <input style="border-style: solid; border-width: 1px;border-color: gray;border-radius: 0px;width: 90%;background: #275976"
                                    type="password" id="id_clave" class="form-control form-control-lg"
-                                   placeholder="********"/>
+                                   placeholder="Contraseña"/>
 
                         </div>
                         {#                        <div class="d-flex justify-content-between align-items-center">#}
                         {#                            <a href="{% url 'password_reset' %}" class="text-body">Olvidó su contraseña?</a>#}
                         {#                        </div>#}
-                        <div class="text-center text-lg-center" style="margin-bottom: 20px">
-                            <a href="javascript:;" id="id_login_usuario"
-                               class="btn btn-lg bg-gradient btn-lg w-50 mt-4 mb-0"
-                               style="background: #1192CF;color: white">Iniciar
-                                Sesión
-                            </a>
-                            {#                            <p class="small fw-bold mt-2 pt-1 mb-0">No tienes una cuenta? <a#}
-                            {#                                    href="{% url 'registrate_usuario' %}"#}
-                            {#                                    class="link-danger">Registrarse</a></p>#}
-                        </div>
+                        <br>
                     </form>
+                    <div class="text-center text-lg-center" style="">
+                        <a href="javascript:;" id="id_login_usuario"
+                           class="btn btn-lg bg-gradient btn-lg w-80 mb-0"
+                           style="border-bottom-right-radius: 30px;border-bottom-left-radius: 30px;border-top-left-radius: 0px;border-top-right-radius: 0px;background: rgba(135, 206, 250, 0.2);box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);color: #ffffff;font-weight:12px">Iniciar
+                            Sesión
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,8 +80,19 @@
 
 {% block script %}
     <script>
+        $(".mainBody").css({
+            "background-image": "url('/static/img/fondo_login.jpg')",
+            "background-size": "cover",
+            "background-position": "center",
+            "background-repeat": "no-repeat"
+        });
         $(document).ready(function () {
-            $(".mainBody").css({"background": " #f4f6f7"})
+            $(".mainBody").css({
+                "background-image": "url('/static/img/fondo_login.jpg')",
+                "background-size": "cover",
+                "background-position": "center",
+                "background-repeat": "no-repeat"
+            });
         })
 
 
@@ -104,23 +131,23 @@
                         desbloquearinterfaz()
                         if (data.success === true) {
 
-                                {#Swal.fire(#}
-                                {#    'Login exitoso!',#}
-                                {#    'Bienvenido.',#}
-                                {#    'success'#}
-                                {#).then((result) => {#}
-                                {#    /* Read more about isConfirmed, isDenied below */#}
-                                {#    if (result.isConfirmed) {#}
-                                {#        window.location = data.url;#}
-                                {#    }#}
-                                {# });#}
-                                window.location = data.url;
+                            {#Swal.fire(#}
+                            {#    'Login exitoso!',#}
+                            {#    'Bienvenido.',#}
+                            {#    'success'#}
+                            {#).then((result) => {#}
+                            {#    /* Read more about isConfirmed, isDenied below */#}
+                            {#    if (result.isConfirmed) {#}
+                            {#        window.location = data.url;#}
+                            {#    }#}
+                            {# });#}
+                            window.location = data.url;
 
 
-                            } else {
-                                desbloquearinterfaz()
-                                mensaje_error(data.mensaje, 'Login Fallido.');
-                            }
+                        } else {
+                            desbloquearinterfaz()
+                            mensaje_error(data.mensaje, 'Login Fallido.');
+                        }
 
                     },
                     error: function () {
