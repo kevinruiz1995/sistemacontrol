@@ -87,7 +87,8 @@
                             </b>
                         </button>
                     </h2>
-                    <div id="categoriaMenu"
+                    {% setvar persona_logeado|args:request|call:"perfil_es_empleado" as perfil_es_empleado %}
+                    <div id="categoriaMenu{% if perfil_es_empleado %}_{% else %}{{ categoria.id }}{% endif %}"
                          class="accordion-collapse collapse show"
                          aria-labelledby="categoria{{ categoria.id }}" data-bs-parent="#accordionMenu">
                         <div class="accordion-body">

@@ -89,3 +89,12 @@ class Persona(ModeloBase):
 
     def persona_es_empleado(self):
         return self.plantillapersona_set.filter(status=True, activo=True)
+
+    def perfil_es_empleado(self, request):
+        from django.contrib.auth.models import User, Group
+        if request.user.is_superuser:
+            return False
+        grupo_ = Group.objects.filter(id=request.session['tipoperfil'], name__icontains='EMPLEADO')
+        if grupo_.exists():
+            return grupo_.first()
+        return False
