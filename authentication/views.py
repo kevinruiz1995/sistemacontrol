@@ -7,7 +7,7 @@ import base64
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
-from authentication.forms import CustomUserCreationForm, CustomLoginForm
+from authentication.forms import CustomUserCreationForm, CustomLoginForm, CambiarContraseñaForm
 from authentication.models import CustomUser
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
@@ -111,6 +111,50 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
+
+def change_password(request):
+    data = {}
+    if request.method == 'POST':
+        if 'action' in request.POST:
+            action = request.POST['action']
+
+            if action == 'change_password':
+                try:
+                    usuario_actual = request.user
+                    claveactual = request.POST['claveactual']
+                    nuevaclave = request.POST['nuevaclave']
+                    repetirclave = request.POST['repetirclave']
+
+                    if nuevaclave != repetirclave:
+                        return JsonResponse({'success': False, 'mensaje': 'La nueva clave no coincide'})
+
+                    user = authenticate(request, username=usuario_actual.username, password=claveactual)
+                    if user is not None:
+                        if user.is_active:
+                            usuario_actual.set_password(nuevaclave)
+                            usuario_actual.save()
+                            return JsonResponse({'success': True, 'mensaje': 'Clave actualizada con éxito!'})
+                        else:
+                            return JsonResponse({'success': False, 'mensaje': 'El usuario se encuentra inactivo'})
+                    else:
+                        return JsonResponse({'success': False, 'mensaje': 'Clave actual incorrecta'})
+
+                    return JsonResponse({'success': True, 'mensaje': 'Clave actualizada con éxito!'})
+                except Exception as ex:
+                    return JsonResponse({'success': False, 'mensaje': 'Error al actualizar clave'})
+    else:
+        if 'action' in request.GET:
+            pass
+        else:
+            try:
+                data['titulo'] = 'Actualizar clave'
+                data['titulo_tabla'] = 'Actualizar clave'
+                form = CambiarContraseñaForm()
+                data['form'] = form
+                data['action'] = 'change_password'
+                return render(request, 'registration/cambiarclave.html', data)
+            except Exception as ex:
+                pass
 
 
 def custom_login(request):
