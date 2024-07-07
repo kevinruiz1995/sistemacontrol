@@ -109,6 +109,31 @@
         })
     </script>
 
+    <script>
+        // static/js/auto_logout.js
+
+        let timeout;
+
+        function resetTimer() {
+            clearTimeout(timeout);
+            timeout = setTimeout(logout, 300000);  // 5 minutos en milisegundos
+        }
+
+        function logout() {
+            window.location.href = '/accounts/logout/';
+        }
+
+        // Eventos que indican actividad del usuario
+        window.onload = resetTimer;
+        window.onmousemove = resetTimer;
+        window.onmousedown = resetTimer;  // capturar clicks del ratón
+        window.ontouchstart = resetTimer;  // capturar toques en dispositivos táctiles
+        window.onclick = resetTimer;  // capturar clicks
+        window.onkeypress = resetTimer;  // capturar teclas presionadas
+        window.addEventListener('scroll', resetTimer, true);  // capturar desplazamientos
+
+    </script>
+
     {% block head %}{% endblock %}
 </head>
 
@@ -184,20 +209,16 @@
                             {% endfor %}
 
 
-
-
-
-
-
                         </ul>
 
                     </li>
                     <li class="nav-item dropdown pe-2 d-flex align-items-center">
-                    {% block retroceder %}
-                         <a class="  me-sm-1 btn-tooltip" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Atrás" data-container="body" data-animation="true"
-                           href="{% if request.path == '/' %} /  {% else %}javascript:history.back(){% endif %}"><span
-                                class="fa fa-arrow-left"></span></a>
-                    {% endblock %}
+                        {% block retroceder %}
+                            <a class="  me-sm-1 btn-tooltip" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                               title="Atrás" data-container="body" data-animation="true"
+                               href="{% if request.path == '/' %} /  {% else %}javascript:history.back(){% endif %}"><span
+                                    class="fa fa-arrow-left"></span></a>
+                        {% endblock %}
                     </li>
                 </ul>
             </div>
