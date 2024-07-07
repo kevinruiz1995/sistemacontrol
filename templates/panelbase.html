@@ -152,7 +152,12 @@
                     <li class="nav-item dropdown pe-2 d-flex align-items-center">
                         <a href="javascript:;" class=" p-0" id="dropdownMenuButton"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-user me-sm-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Usuario" data-container="body" data-animation="true"></i>
+                            {% if persona_logeado.foto %}
+                                <img src="/media/{{ persona_logeado.foto }}" width="20" style="border-radius: 50%;
+            object-fit: cover;">
+                            {% else %}
+                                <i class="fa fa-user me-sm-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Usuario" data-container="body" data-animation="true"></i>
+                            {% endif %}
                         </a>
                         <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4"
                             aria-labelledby="dropdownMenuButton">
