@@ -42,6 +42,12 @@ def view_configuracioncoordenada(request):
                 with transaction.atomic():
                     form = ConfiguracionCoordenadaForm(request.POST)
                     if form.is_valid():
+                        if ConfiguracionCoordenadaMarcacion.objects.filter(status=True, nombre=form.cleaned_data['nombre'],
+                                                                           latitud=form.cleaned_data['latitud'],
+                                                                           longitud=form.cleaned_data['longitud'],
+                                                                           radio=form.cleaned_data['radio']).exists():
+                            return JsonResponse({'success': False, 'mensaje': 'Registro existente'})
+
                         instance = ConfiguracionCoordenadaMarcacion(
                             nombre=form.cleaned_data['nombre'],
                             latitud=form.cleaned_data['latitud'],
@@ -49,9 +55,9 @@ def view_configuracioncoordenada(request):
                             radio=form.cleaned_data['radio'],
                         )
                         instance.save(request)
-                        return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
+                        return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                     else:
-                        return JsonResponse({'success': False, 'errors': form.errors})
+                        return JsonResponse({'success': False, 'mensaje': form.errors})
             except Exception as e:
                 transaction.set_rollback(True)
                 return JsonResponse({'success': False})
@@ -61,15 +67,20 @@ def view_configuracioncoordenada(request):
                 with transaction.atomic():
                     form = ConfiguracionCoordenadaForm(request.POST)
                     if form.is_valid():
+                        if ConfiguracionCoordenadaMarcacion.objects.filter(status=True, nombre=form.cleaned_data['nombre'],
+                                                                           latitud=form.cleaned_data['latitud'],
+                                                                           longitud=form.cleaned_data['longitud'],
+                                                                           radio=form.cleaned_data['radio']).exclude(id=request.POST['id']).exists():
+                            return JsonResponse({'success': False, 'mensaje': 'Registro existente'})
                         instance = ConfiguracionCoordenadaMarcacion.objects.get(id=request.POST['id'])
                         instance.nombre = form.cleaned_data['nombre']
                         instance.latitud = form.cleaned_data['latitud']
                         instance.longitud = form.cleaned_data['longitud']
                         instance.radio = form.cleaned_data['radio']
                         instance.save(request)
-                        return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
+                        return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                     else:
-                        return JsonResponse({'success': False, 'errors': form.errors})
+                        return JsonResponse({'success': False, 'mensaje': form.errors})
             except Exception as e:
                 transaction.set_rollback(True)
                 return JsonResponse({'success': False})
