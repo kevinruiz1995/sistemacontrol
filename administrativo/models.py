@@ -236,3 +236,36 @@ class AmortizacionPrestamo(ModeloBase):
 
     def __str__(self):
         return f"Préstamos: {self.prestamo.__str__()}, monto a cancelar: {self.monto_real}"
+
+
+ESTADO_PERMISO = (
+    (1, 'PENDIENTE'),
+    (2, 'APROBADO'),
+    (3, 'RECHAZADO'),
+)
+
+
+class PermisoLaboral(ModeloBase):
+    persona = models.ForeignKey(Persona, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Persona que registra permiso')
+    fecha_inicio = models.DateField(blank=True, null=True, verbose_name="Fecha de inicio del permiso")
+    fecha_fin = models.DateField(blank=True, null=True, verbose_name="Fecha fin del permiso")
+    motivo = models.CharField(max_length=1500, verbose_name="Motivo del permiso")
+    archivo = models.FileField(upload_to='evidenciapermiso/', blank=True, null=True, verbose_name='Evidencia del permiso')
+    estado = models.IntegerField(default=1, choices=ESTADO_PERMISO, verbose_name='Estado del permiso', blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Justificación de falta'
+        verbose_name_plural = 'Justificación de faltas'
+
+    def __str__(self):
+        return f"{self.persona.__str__()} {self.fecha_inicio} - {self.fecha_fin}"
+
+    def tipo_color_estado(self):
+        color = 'default'
+        if self.estado == 2:
+            color = 'success'
+        elif self.estado == 3:
+            color = 'danger'
+        return color
+
+

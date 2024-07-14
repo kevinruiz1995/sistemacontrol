@@ -1,6 +1,6 @@
 from django import forms
 from administrativo.models import PlantillaPersona, Cargo, Area, JornadaLaboral, DetalleJornadaLaboral, JornadaEmpleado, \
-    DatosOrganizacion, MOTIVO_MARCACION, DatosFamiliares, Genero, ConfiguracionCoordenadaMarcacion
+    DatosOrganizacion, MOTIVO_MARCACION, DatosFamiliares, Genero, ConfiguracionCoordenadaMarcacion, PermisoLaboral
 from core.core import DIAS_SEMANA, PARENTESCOS
 
 class PlantillaPersonalForm(forms.ModelForm):
@@ -167,3 +167,18 @@ class ConfiguracionCoordenadaForm(forms.ModelForm):
         self.fields['latitud'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6', 'required': 'true', 'type': 'input', 'placeholder': 'Latitud'})
         self.fields['longitud'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6', 'required': 'true', 'type': 'input', 'placeholder': 'Longitud'})
         self.fields['radio'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6', 'required': 'true', 'type': 'input', 'placeholder': 'Radio'})
+
+class PermisoLaboralForm(forms.ModelForm):
+    class Meta:
+        model = PermisoLaboral
+        fields = [
+                    'motivo', 'fecha_inicio', 'fecha_fin', 'archivo'
+                 ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Agregar clases CSS específicas a cada campo
+        self.fields['motivo'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-12', 'required': 'true', 'type': 'text', 'placeholder': 'Motivo'})
+        self.fields['fecha_inicio'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'yyyy-mm-dd', 'required':'true'})
+        self.fields['fecha_fin'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'yyyy-mm-dd', 'required':'true'})
+        self.fields['archivo'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-12'})

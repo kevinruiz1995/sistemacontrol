@@ -15,6 +15,8 @@ from administrativo.conf_acceso_modulo import view_acceso_modulo
 from administrativo.conf_grupo import view_grupo
 from administrativo.view_modulo import view_modulo
 from administrativo.view_configuracioncoordenada import view_configuracioncoordenada
+from administrativo.view_mispermisos import view_mispermisoslaborales
+from administrativo.view_permisoslaborales import view_permisoslaborales
 
 app_name = 'administrativo'
 urlpatterns = [
@@ -75,5 +77,9 @@ urlpatterns = [
     path('datosfamiliares/editar/<int:id>/', editar_datosfamiliares, name='editar_datosfamiliares'),
     path('datosfamiliares/eliminar/<int:id>/', eliminar_datosfamiliares, name='eliminar_datosfamiliares'),
     path('mis_marcadas/', mis_marcadas, name='mis_marcadas'),
+
+    #MÓDULO MIS PERMISOS LABORALES
+    path('mispermisos/', view_mispermisoslaborales, name='mispermisos'),
+    path('permisoslaborales/', view_permisoslaborales, name='permisoslaborales'),
 
 ]
