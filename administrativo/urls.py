@@ -80,6 +80,8 @@ urlpatterns = [
 
     #MÓDULO MIS PERMISOS LABORALES
     path('mispermisos/', view_mispermisoslaborales, name='mispermisos'),
+
+    #MÓDULO PERMISOS LABORALES
     path('permisoslaborales/', view_permisoslaborales, name='permisoslaborales'),
 
 ]
