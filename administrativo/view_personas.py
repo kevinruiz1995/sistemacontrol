@@ -37,6 +37,16 @@ def view_persona(request):
                 try:
                     form = PersonaForm(request.POST, request.FILES)
                     if form.is_valid():
+                        cedula = form.cleaned_data['cedula']
+                        pasaporte = form.cleaned_data['pasaporte']
+                        ruc = form.cleaned_data['ruc']
+                        if Persona.objects.filter(Q(status=True) & Q(nombres=form.cleaned_data['nombres']) &
+                                                  Q(apellido1=form.cleaned_data['apellido1']) &
+                                                  Q(apellido2=form.cleaned_data['apellido2']) &
+                                                  (Q(cedula=cedula) | Q(pasaporte=pasaporte) |
+                                                   Q(ruc=ruc))).exists():
+                            return JsonResponse({'success': False,
+                                                 'mensaje': 'Existe persona registrada con los mismos datos ingresados!'})
                         instance = Persona(
                             nombres=form.cleaned_data['nombres'],
                             apellido1=form.cleaned_data['apellido1'],
@@ -75,7 +85,7 @@ def view_persona(request):
                         )
                         persona_perfil.save(request)
                         log_auditoria(request, f"Adiciona persona: {instance.id}", 1)
-                        return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
+                        return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                     else:
                         return JsonResponse({"success": False, "mensaje": str(form.errors.items())})
 
@@ -88,14 +98,27 @@ def view_persona(request):
                     with transaction.atomic():
                         form = PersonaForm(request.POST, request.FILES)
                         if form.is_valid():
+                            cedula = form.cleaned_data['cedula']
+                            pasaporte = form.cleaned_data['pasaporte']
+                            ruc = form.cleaned_data['ruc']
+                            if Persona.objects.filter(Q(status=True) & Q(nombres=form.cleaned_data['nombres']) &
+                                                          Q(apellido1=form.cleaned_data['apellido1']) &
+                                                          Q(apellido2=form.cleaned_data['apellido2']) &
+                                                          (Q(cedula=cedula) | Q(pasaporte=pasaporte) |
+                                                          Q(ruc=ruc))).exclude(id=request.POST['id']).exists():
+                                return JsonResponse({'success': False, 'mensaje': 'Existe persona registrada con los mismos datos ingresados!'})
+
                             instance = Persona.objects.get(id=int(request.POST['id']))
                             instance.nombres = form.cleaned_data['nombres']
                             instance.apellido1 = form.cleaned_data['apellido1']
                             instance.apellido2 = form.cleaned_data['apellido2']
-                            if request.session['administrador_principal']:
-                                instance.cedula = form.cleaned_data['cedula']
-                                instance.pasaporte = form.cleaned_data['pasaporte']
-                                instance.ruc = form.cleaned_data['ruc']
+
+
+
+                            instance.cedula = cedula
+                            instance.pasaporte = pasaporte
+                            instance.ruc = ruc
+
                             instance.direccion = form.cleaned_data['direccion']
                             instance.genero = form.cleaned_data['genero']
                             instance.fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
@@ -110,7 +133,7 @@ def view_persona(request):
                                 instance.foto = archivo
                                 instance.save(request)
                             log_auditoria(request, f"Edita persona: {instance.id}", 2)
-                            return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
+                            return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                         else:
                             return JsonResponse({'success': False, 'errors': form.errors})
                 except Exception as e:
