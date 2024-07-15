@@ -33,7 +33,7 @@ class Persona(ModeloBase):
     genero = models.ForeignKey(Genero, blank=True, null=True, on_delete=models.CASCADE, verbose_name=u"Género")
     fecha_nacimiento = models.DateField(verbose_name=u"Fecha nacimiento", blank=True, null=True)
     correo_electronico = models.EmailField(verbose_name=u"Email", blank=True, null=True)
-    telefono = models.CharField(max_length=20, blank=True, null=True, verbose_name=u"Teléfono")
+    telefono = models.CharField(max_length=10, blank=True, null=True, verbose_name=u"Teléfono")
     foto = models.FileField(upload_to='fotopersona/', blank=True, null=True, verbose_name='Foto de la persona')
 
 
