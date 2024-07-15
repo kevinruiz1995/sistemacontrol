@@ -1,6 +1,7 @@
 from django.db import models
 import os
 from sistemacontrol import settings
+from sistemacontrol.settings import BASE_DIR
 from django.contrib.staticfiles import finders
 from django.http import JsonResponse, HttpResponse
 from sistemacontrol.settings import BASE_DIR
@@ -12,7 +13,21 @@ from django.contrib.auth.models import User, Group
 from django.template.loader import get_template
 # from io import StringIO
 import io as StringIO
+from xhtml2pdf import pisa
 import uuid
+
+def convertir_html_a_pdf_save(template_src, context_dict, filename):
+    template = get_template(template_src)
+    html = template.render(context_dict).encode(encoding="UTF-8")
+    result = StringIO.BytesIO()
+    output_folder = os.path.join(BASE_DIR, 'media', 'reporteasistencia')
+    filepdf = open(output_folder + os.sep + filename, "w+b")
+    links = lambda uri, rel: os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ''))
+    pdf1 = pisa.pisaDocument(StringIO.BytesIO(html), dest=filepdf, link_callback=links)
+    pisaStatus = pisa.CreatePDF(StringIO.BytesIO(html), result, link_callback=links)
+    if not pdf1.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return JsonResponse({"result": "bad", "mensaje": u"Incidencias al generar el certificado"})
 
 def link_callback(uri, rel):
     """

@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from core.core import meses
 from administrativo.models import PlantillaPersona, RegistroEntradaSalidaDiario, MOTIVO_MARCACION
 from system.seguridad_sistema import control_entrada_modulos, log_auditoria
-from baseapp.funciones import add_data_aplication
+from baseapp.funciones import add_data_aplication, convertir_html_a_pdf_save
 from baseapp.models import Persona
 
 @login_required
@@ -75,6 +75,32 @@ def view_marcacionempleado(request):
                     return render(request, "marcacionesempleado/viewdetalle.html", data)
                 except Exception as ex:
                     print('Error on line {}'.format(ex.exc_info()[-1].tb_lineno))
+
+            if action == 'generar_reporte':
+                try:
+                    import os
+                    from sistemacontrol.settings import BASE_DIR, MEDIA_ROOT
+                    data['MOTIVO_MARCACION'] = MOTIVO_MARCACION
+                    data['meses'] = meses
+                    data['empleado'] = empleado = PlantillaPersona.objects.get(id=int(request.GET['id']))
+                    filtro = (Q(status=True) & Q(empleado_id=empleado.id))
+                    data['marcaciones'] = lista = RegistroEntradaSalidaDiario.objects.filter(filtro).order_by('fecha_hora__day')
+                    firma = '_'
+                    longitud_nombre = len(empleado.__str__())
+                    data['firma'] = firma = firma * (longitud_nombre + longitud_nombre + 4)
+                    name = "reporteasistencia_" + str(empleado.id)
+                    crear_carpeta = os.path.join(os.path.join(BASE_DIR, 'media', 'reporteasistencia'))
+                    try:
+                        os.makedirs(crear_carpeta)
+                    except Exception as ex:
+                        pass
+                    valida = convertir_html_a_pdf_save(
+                        'marcacionesempleado/reporte.html',
+                        {'pagesize': 'A4', 'data': data, 'MEDIA_ROOT': MEDIA_ROOT}, name + '.pdf'
+                    )
+                    return valida
+                except Exception as ex:
+                    return JsonResponse({"respuesta": False, "mensaje": "Error al generar el certificado."})
 
         else:
             try:

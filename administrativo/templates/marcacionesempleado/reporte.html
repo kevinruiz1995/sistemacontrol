@@ -1,0 +1,134 @@
+<meta charset="utf-8"/>
+{% load funciones_especiales %}
+{% load static %}
+{% block head %}
+    <title>Curso</title>
+{% endblock %}
+{% block canvas %}
+    <style type="text/css">
+        @page {
+            background-image: url('{{ MEDIA_ROOT }}/fondo_certificado/fondo_certificado.png');
+            size: A4 landscape;
+            top: 0cm;
+            left: 2cm;
+            right: 2cm;
+            bottom: 0cm;
+            @frame {
+                -pdf-frame-content: company_logo;
+                left: 0cm;
+                right: 0cm;
+                bottom: -2cm;
+                top: 2cm;
+            }
+            @frame {
+                -pdf-frame-content: evolucion_logo;
+                left: 2cm;
+                right: 2cm ;
+                bottom: 1cm;
+                top: 2cm;
+            }
+        }
+
+        @page maintmpl {
+            background-image: url('{{ request.path }}/media/fondo_certificado/fondo_certificado.png');
+            size: A4 landscape;
+            top: 1cm;
+            left: 2cm;
+            right: 2cm;
+            bottom: 2cm;
+            @frame {
+            {#background-image: url('https://sga.unemi.edu.ec/media/reportes/encabezados_pies/formato_certificado_posgrado_reverso.png?v={{ data.version }}');#}
+                -pdf-frame-content: footerContent;
+                bottom: 0cm;
+                bottom: 0cm;
+                margin-left: 0cm;
+                margin-right: 0cm;
+                text-align: right;
+                height: 1cm;
+            }
+        }
+
+        #texto {
+            letter-spacing: 2pt; /* para separar entgre letras */
+            word-spacing: 5pt; /* para separacion entre palabras */
+            line-height: 20pt; /* para la separacion entre lineas */
+            text-indent: 30pt; /* para sangrias */
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function () {
+
+        });
+
+        function linkinsignia() {
+        }
+    </script>
+    <div>
+    </div>
+    <div>
+        <table class="table table-striped table-hover align-items-center mb-0 ">
+            <thead>
+            <tr style="text-align: center">
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolde text-center">Día
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolde text-center">
+                    Jornada
+                </th>
+                {% for motivo in data.MOTIVO_MARCACION %}
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolde text-center">
+                        {{ motivo.1 }}
+                    </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for marcada in data.marcaciones %}
+                <tr style="text-align: center">
+                    <td class="align-middle border-bottom-0 text-center">
+                        {{ marcada.fecha_hora|date:"l"|capfirst }}, {{ marcada.fecha_hora | date:"d" }}
+                    </td>
+                    <td class="align-middle border-bottom-0 text-center">
+                        {{ marcada.jornada }}
+                    </td>
+                    {% for motivo in data.MOTIVO_MARCACION %}
+                        {% with mismarcaciones=marcada|filtro:motivo.0|funcion:'mismarcaciones' %}
+                            {% for registro in mismarcaciones %}
+                                <td class="align-middle border-bottom-0 text-center">
+                                    {{ registro.fecha_hora|date:'H:i' }}
+                                    <br>
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ registro.ubicacion }}"
+                                       target="_blank"
+                                       title="Consultar ubicación de marcada">Ver ubicación</a>
+                                </td>
+                            {% empty %}
+                                <td class="align-middle border-bottom-0 text-center">
+                                    {% with tienepermiso=data.empleado|filtro:marcada.fecha_hora|funcion:'verificarpermiso' %}
+                                        {% if tienepermiso %}
+                                            Tiene permiso laboral aprobado
+                                        {% else %}
+                                            ---
+                                        {% endif %}
+                                    {% endwith %}
+
+                                </td>
+                            {% endfor %}
+                        {% endwith %}
+                    {% endfor %}
+
+
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="10"
+                        class="text-uppercase text-secondary text-xxs font-weight-bolde text-center">No
+                        existen registro
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br/>
+{% endblock %}

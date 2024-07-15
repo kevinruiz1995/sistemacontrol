@@ -17,6 +17,57 @@
 
 
         })
+        function generar_reporte(action, empleado) {
+
+            Swal.fire({
+                title: '¿Estás seguro de generar el reporte',
+                text: "Está acción es irrevesible!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, genera!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ reques.path }}',
+                        async: false,
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            action: action,
+                            id: empleado,
+                        },
+                        dataType: "json",
+                        beforeSend: function () {
+
+                        }
+                    }).done(function (data) {
+                        if (data.respuesta === true) {
+                            Swal.fire(
+                                'Información',
+                                data.mensaje,
+                                'success'
+                            ).then(function () {
+                                location.reload();
+                            });
+                        } else {
+
+                            Swal.fire(data.mensaje);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        mensaje_alerta('Error al intentar conectar con el servidor', 'Error de conexiòn');
+                    }).always(function () {
+                    });
+
+
+                }
+
+            })
+
+
+        }
     </script>
 {% endblock %}
 {% block contenido %}
@@ -104,6 +155,9 @@
                                                 <li><a class="dropdown-item border-radius-md"
                                                        href="?action=marcacionesempleado&id={{ list_persona.pk }}"> Ver marcadas</a>
                                                 </li>
+                                                <li><a class="dropdown-item border-radius-md"
+                                                           href="{{ request.path }}?action=generar_reporte&id={{ list_persona.id }}" target="_blank">
+                                                        Generar reporte</a></li>
                                             </ul>
                                         </div>
                                     </td>

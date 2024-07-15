@@ -143,6 +143,10 @@ class PlantillaPersona(ModeloBase):
         total_marcadas = DetalleRegistroEntradaSalida.objects.filter(status=True, dia_id__in=registro_diario).count()
         return total_marcadas
 
+    def verificarpermiso(self, fecha):
+        permiso = PermisoLaboral.objects.filter(status=True, persona=self.persona, fecha_inicio__lte=fecha, fecha_fin__gte=fecha, estado=2)
+        return permiso.exists()
+
 
 class JornadaLaboral(ModeloBase):
     nombre = models.CharField(max_length=100, blank=True, null=True)
