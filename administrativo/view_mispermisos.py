@@ -13,7 +13,7 @@ from core.core import DIAS_SEMANA
 from administrativo.models import JornadaEmpleado, PermisoLaboral
 from administrativo.forms import PermisoLaboralForm
 from authentication.models import CustomUser
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
 
 @login_required
@@ -53,6 +53,7 @@ def view_mispermisoslaborales(request):
                                     archivo._name = "evidenciapermiso_" + str(instance.id) + '_' + str(datetime.now()).replace('-', '_') + extension.lower()
                                     instance.archivo = archivo
                                     instance.save(request)
+                                log_auditoria(request, f"Adiciona solicitud permiso laboral: {instance.id}", 1)
                                 return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                             else:
                                 return JsonResponse({'success': False, 'mensaje': "Solicitud de permiso laboral ya se encuentra registrado con el mismo motivo."})
@@ -80,6 +81,7 @@ def view_mispermisoslaborales(request):
                                     archivo._name = "evidenciapermiso_" + str(instance.id) + '_' + str(datetime.now()).replace('-', '_') + extension.lower()
                                     instance.archivo = archivo
                                     instance.save(request)
+                                log_auditoria(request, f"Edita solicitud permiso laboral: {instance.id}", 2)
                                 return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                             else:
                                 return JsonResponse({'success': False, 'mensaje': "Solicitud de permiso laboral ya se encuentra registrado con el mismo motivo."})
@@ -94,6 +96,7 @@ def view_mispermisoslaborales(request):
                     instance = PermisoLaboral.objects.get(id=int(request.POST['id']))
                     instance.status = False
                     instance.save(request)
+                    log_auditoria(request, f"Elimina solicitud permiso laboral: {instance.id}", 3)
                     return JsonResponse({'success': True, 'mensaje': 'Registro eliminado con éxito'})
                 except JornadaEmpleado.DoesNotExist:
                     return JsonResponse({'success': False, 'mensaje': 'El registro no existe'})

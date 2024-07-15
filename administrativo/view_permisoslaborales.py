@@ -13,7 +13,7 @@ from core.core import DIAS_SEMANA
 from administrativo.models import JornadaEmpleado, PermisoLaboral
 from administrativo.forms import JornadaForm, DetalleJornadaForm, JornadaEmpleadoForm
 from authentication.models import CustomUser
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
 
 @login_required
@@ -38,6 +38,7 @@ def view_permisoslaborales(request):
                     instance = PermisoLaboral.objects.get(id=int(request.POST['id']))
                     instance.estado = 2
                     instance.save(request)
+                    log_auditoria(request, f"Aprueba solicitud permiso laboral: {instance.id}", 2)
                     return JsonResponse({'success': True, 'mensaje': 'Permiso aprobado correctamente!'})
                 except JornadaEmpleado.DoesNotExist:
                     return JsonResponse({'success': False, 'mensaje': 'Error al aprobar permiso laboral'})
@@ -47,6 +48,7 @@ def view_permisoslaborales(request):
                     instance = PermisoLaboral.objects.get(id=int(request.POST['id']))
                     instance.estado = 3
                     instance.save(request)
+                    log_auditoria(request, f"Rechaza solicitud permiso laboral: {instance.id}", 2)
                     return JsonResponse({'success': True, 'mensaje': 'Permiso rechazado correctamente!'})
                 except JornadaEmpleado.DoesNotExist:
                     return JsonResponse({'success': False, 'mensaje': 'Error al rechazar permiso laboral'})

@@ -11,6 +11,7 @@ from system.forms import ModuloForm
 from system.models import Modulo
 from baseapp.funciones import add_data_aplication
 from administrativo.models import Persona
+from system.seguridad_sistema import log_auditoria
 
 
 @login_required(redirect_field_name='next', login_url='/login')
@@ -49,6 +50,7 @@ def view_modulo(request):
                             activo=form.cleaned_data['activo']
                         )
                         modulo.save(request)
+                        log_auditoria(request, f"Adiciona modulo: {modulo.id}", 1)
                         return JsonResponse({"success": True, "mensaje": "Registro guardado correctamente."})
 
                     else:
@@ -83,7 +85,7 @@ def view_modulo(request):
                         modulo.url_name = form.cleaned_data['url_name']
                         modulo.activo = form.cleaned_data['activo']
                         modulo.save(request)
-
+                        log_auditoria(request, f"Edita módulo: {modulo.id}", 2)
                         return JsonResponse({"success": True, "mensaje": "Registro Modificado correctamente."})
                     else:
                         return JsonResponse({"success": False, "mensaje": form.errors.items()})
@@ -99,6 +101,7 @@ def view_modulo(request):
                         registro = Modulo.objects.get(pk=request.POST['id'])
                         registro.status = False
                         registro.save(request)
+                        log_auditoria(request, f"Elimina módulo: {registro.id}", 3)
                         return JsonResponse({"success": True, "mensaje": "Registro eliminado correctamente."})
 
                 except Exception as ex:

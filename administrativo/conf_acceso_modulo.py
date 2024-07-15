@@ -9,6 +9,7 @@ from system.forms import AccesoModuloForm
 from baseapp.funciones import add_data_aplication
 from system.models import AccesoModulo
 from administrativo.models import Persona
+from system.seguridad_sistema import log_auditoria
 
 
 @login_required(redirect_field_name='next', login_url='/login')
@@ -40,6 +41,7 @@ def view_acceso_modulo(request):
                             activo = activo
                         )
                         registro.save(request)
+                        log_auditoria(request, f"Configura nuevo acceso a módulo: {registro.modulo.id}", 1)
                     else:
                        return JsonResponse({"success": False, "mensaje": form.errors.items()})
 
@@ -54,6 +56,7 @@ def view_acceso_modulo(request):
                         registro = AccesoModulo.objects.get(pk=request.POST['id'])
                         registro.status = False
                         registro.save(request)
+                        log_auditoria(request, f"Elimina acceso a módulo: {registro.modulo.id}", 3)
                         return JsonResponse({"success": True, "mensaje": "Registro eliminado correctamente."})
 
                 except Exception as ex:
@@ -70,6 +73,7 @@ def view_acceso_modulo(request):
                     acceso = AccesoModulo.objects.get(pk= request.GET['id'])
                     acceso.activo =False
                     acceso.save(request)
+                    log_auditoria(request, f"Desactiva acceso a módulo: {acceso.modulo.id}", 2)
                     return JsonResponse({"success": True, "mensaje": "desactivado correctamente."})
                 except Exception as ex:
                     pass
@@ -79,6 +83,7 @@ def view_acceso_modulo(request):
                     acceso = AccesoModulo.objects.get(pk= request.GET['id'])
                     acceso.activo =True
                     acceso.save(request)
+                    log_auditoria(request, f"Activa acceso a módulo: {acceso.modulo.id}", 2)
                     return JsonResponse({"success": True, "mensaje": "desactivado correctamente."})
                 except Exception as ex:
                     pass

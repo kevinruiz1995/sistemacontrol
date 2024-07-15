@@ -3,6 +3,8 @@ from core.helper_model import ModeloBase
 from core.core import IDENTIFICACIONES
 from baseapp.models import Persona, Genero
 from core.core import DIAS_SEMANA, PARENTESCOS
+from authentication.models import CustomUser
+from system.models import Modulo
 
 class DatosOrganizacion(ModeloBase):
     nombre = models.CharField(blank=True, null=True, max_length=500, verbose_name=u"Nombre de la empresa")
@@ -269,3 +271,22 @@ class PermisoLaboral(ModeloBase):
         return color
 
 
+ACCIONES_AUDITORIA = (
+    (1, 'Adición'),
+    (2, 'Edición'),
+    (3, 'Eliminación'),
+)
+
+
+class Auditoria(ModeloBase):
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE,blank=True, null=True, verbose_name='Usuario que realiza la acción')
+    modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE,blank=True, null=True, verbose_name='Módulo donde se realizó la acción')
+    contexto = models.CharField(max_length=2000, verbose_name=u'Descripción de la acción que realizó el usuario')
+    tipoaccion = models.IntegerField(choices=ACCIONES_AUDITORIA, blank=True, null=True, verbose_name=u'Tipo de acción que realizó el usuario')
+
+    class Meta:
+        verbose_name = 'Auditoría'
+        verbose_name_plural = 'Auditorías'
+
+    def __str__(self):
+        return f"{self.usuario} {self.modulo.__str__()} - {self.contexto}"

@@ -14,10 +14,12 @@ from baseapp.models import Persona
 from administrativo.models import JornadaLaboral, DetalleJornadaLaboral
 from administrativo.forms import JornadaForm, DetalleJornadaForm
 from authentication.models import CustomUser
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
 
 @login_required
+@control_entrada_modulos
+@transaction.atomic()
 def view(request):
     global ex
     data = {}
@@ -44,6 +46,7 @@ def view(request):
                             nombre=form.cleaned_data['nombre'],
                         )
                         instance.save(request)
+                        log_auditoria(request, f"Adiciona jornada: {instance.id}", 1)
                         return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                     else:
                         return JsonResponse({'success': False, 'errors': form.errors})
@@ -59,6 +62,7 @@ def view(request):
                         instance = JornadaLaboral.objects.get(id=request.POST['id'])
                         instance.nombre = form.cleaned_data['nombre']
                         instance.save(request)
+                        log_auditoria(request, f"Edita jornada: {instance.id}", 2)
                         return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                     else:
                         return JsonResponse({'success': False, 'errors': form.errors})
@@ -71,6 +75,7 @@ def view(request):
                 instance = JornadaLaboral.objects.get(id=int(request.POST['id']))
                 instance.status = False
                 instance.save(request)
+                log_auditoria(request, f"Elimina jornada: {instance.id}", 3)
                 return JsonResponse({'success': True, 'message': 'Acción realizada con exito!'})
             except Exception as ex:
                 return JsonResponse({'success': False, "errors": 'Error al eliminar jornada'})
@@ -95,6 +100,7 @@ def view(request):
                             motivo_salida=motivo_salida,
                         )
                         instance.save(request)
+                        log_auditoria(request, f"Adiciona detalle jornada: {instance.id}", 1)
                         return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                     else:
                         return JsonResponse({'success': False, 'errors': form.errors})
@@ -113,6 +119,7 @@ def view(request):
                         instance.motivo_entrada = form.cleaned_data['motivo_entrada']
                         instance.motivo_salida = form.cleaned_data['motivo_salida']
                         instance.save(request)
+                        log_auditoria(request, f"Edita detalle jornada: {instance.id}", 2)
                         return JsonResponse({'success': True, 'message': 'Acción realizada con exito!'})
                     else:
                         return JsonResponse({'success': False, 'errors': form.errors})
@@ -125,6 +132,7 @@ def view(request):
                 instance = DetalleJornadaLaboral.objects.get(id=int(request.POST['id']))
                 instance.status = False
                 instance.save(request)
+                log_auditoria(request, f"Elimina detalle jornada: {instance.id}", 3)
                 return JsonResponse({'success': True, 'message': 'Acción realizada con exito!'})
             except Exception as ex:
                 return JsonResponse({'success': False, "errors": 'Error al eliminar detalle'})

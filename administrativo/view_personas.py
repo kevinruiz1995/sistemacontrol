@@ -13,7 +13,7 @@ from administrativo.models import PlantillaPersona, Persona, PersonaPerfil
 from baseapp.forms import PersonaForm
 from baseapp.funciones import add_data_aplication
 from authentication.models import CustomUser
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
 
 @login_required
@@ -74,6 +74,7 @@ def view_persona(request):
                             persona=instance
                         )
                         persona_perfil.save(request)
+                        log_auditoria(request, f"Adiciona persona: {instance.id}", 1)
                         return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                     else:
                         return JsonResponse({"success": False, "mensaje": str(form.errors.items())})
@@ -108,6 +109,7 @@ def view_persona(request):
                                     '-', '_') + extension.lower()
                                 instance.foto = archivo
                                 instance.save(request)
+                            log_auditoria(request, f"Edita persona: {instance.id}", 2)
                             return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                         else:
                             return JsonResponse({'success': False, 'errors': form.errors})
@@ -121,6 +123,7 @@ def view_persona(request):
                         registro = Persona.objects.get(pk=request.POST['id'])
                         registro.status = False
                         registro.save(request)
+                        log_auditoria(request, f"Elimina persona: {registro.id}", 3)
                         return JsonResponse({"success": True, "mensaje": "Registro eliminado correctamente."})
 
                 except Exception as ex:
@@ -145,7 +148,7 @@ def view_persona(request):
                         elif tipo == 3:
                             perfil_persona.is_jefe_departamental = estado
                             perfil_persona.save(request)
-
+                        log_auditoria(request, f"Gestiona estado perfil persona: {perfil_persona.id}", 2)
                     return JsonResponse({'success': True, 'message': 'Acción realizada con éxito'})
                 except PersonaPerfil.DoesNotExist:
                     return JsonResponse({'success': False, 'message': 'El registro no existe'})
@@ -164,6 +167,7 @@ def view_persona(request):
                     #Obtén el usuario actual y guarda la imagen en el campo 'imagen'
                     usuario.imagen.save(f'{usuario.username}_imagen.jpg', ContentFile(imagen_decodificada), save=True)
 
+                    log_auditoria(request, f"Almacena foto para reconocimiento facial: {persona_registro.id}", 2)
                     return JsonResponse({"success": True, 'message': 'Imagen guardada con éxito'})
                 except Exception as ex:
                     pass

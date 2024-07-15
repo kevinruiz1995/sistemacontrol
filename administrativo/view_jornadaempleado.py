@@ -13,7 +13,7 @@ from core.core import DIAS_SEMANA
 from administrativo.models import JornadaLaboral, DetalleJornadaLaboral, JornadaEmpleado, PlantillaPersona
 from administrativo.forms import JornadaForm, DetalleJornadaForm, JornadaEmpleadoForm
 from authentication.models import CustomUser
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
 
 @login_required
@@ -48,6 +48,7 @@ def view_jornadaempleado(request):
                                         jornada=form.cleaned_data['jornada'],
                                     )
                                     instance.save(request)
+                                    log_auditoria(request, f"Asigna jornada a empleado: {instance.id}", 1)
                                     return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                                 return JsonResponse(
                                     {'success': False, 'errors': "El empleado ya cuenta con jornada laboral asignada"})
@@ -72,6 +73,7 @@ def view_jornadaempleado(request):
                                     instance.empleado_id = id_empleado
                                     instance.jornada = form.cleaned_data['jornada']
                                     instance.save(request)
+                                    log_auditoria(request, f"Edita jornada del empleado: {instance.id}", 2)
                                     return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                                 return JsonResponse({'success': False,
                                                      'errors': "El empleado seleccionado ya cuenta con jornada laboral asignada"})
@@ -87,6 +89,7 @@ def view_jornadaempleado(request):
                     instance = JornadaEmpleado.objects.get(id=int(request.POST['id']))
                     instance.status = False
                     instance.save(request)
+                    log_auditoria(request, f"Elimina jornada configurada al empleado: {instance.id}", 3)
                     return JsonResponse({'success': True, 'message': 'Registro eliminado con éxito'})
                 except JornadaEmpleado.DoesNotExist:
                     return JsonResponse({'success': False, 'message': 'El registro no existe'})

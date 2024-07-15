@@ -17,6 +17,7 @@ from administrativo.view_modulo import view_modulo
 from administrativo.view_configuracioncoordenada import view_configuracioncoordenada
 from administrativo.view_mispermisos import view_mispermisoslaborales
 from administrativo.view_permisoslaborales import view_permisoslaborales
+from administrativo.view_auditoria import view_auditoria
 
 app_name = 'administrativo'
 urlpatterns = [
@@ -83,5 +84,8 @@ urlpatterns = [
 
     #MÓDULO PERMISOS LABORALES
     path('permisoslaborales/', view_permisoslaborales, name='permisoslaborales'),
+
+    #MÓDULO AUDITORÍA
+    path('auditoria/', view_auditoria, name='auditoria'),
 
 ]

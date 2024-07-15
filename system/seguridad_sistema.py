@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from system.models import AccesoModulo, Modulo
+from administrativo.models import Auditoria
 
 
 
@@ -22,3 +23,14 @@ def control_entrada_modulos(f):
         else:
             return HttpResponseRedirect('/')
     return new_f
+
+def log_auditoria(request, contexto, tipoaccion):
+    try:
+        url_modulo = request.path[1:]
+        modulo = Modulo.objects.filter(status=True, activo=True, url_name=url_modulo)
+        if modulo.exists():
+            modulo = modulo.first()
+            auditoria_ = Auditoria(usuario=request.user, modulo=modulo, contexto=contexto, tipoaccion=tipoaccion)
+            auditoria_.save(request)
+    except Exception as ex:
+        pass

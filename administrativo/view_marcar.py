@@ -11,7 +11,7 @@ from administrativo.models import PlantillaPersona, Persona, JornadaLaboral, Reg
     JornadaEmpleado, DetalleJornadaLaboral
 from geopy.geocoders import Nominatim
 from math import radians, sin, cos, sqrt, atan2
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 from django.core.files.base import ContentFile
 from authentication.views import comparar_rasgos
 
@@ -155,6 +155,7 @@ def registrar_marcada(request):
                                                                          motivo=detalle.motivo_salida)
                             nuevoregistro.save(request)
                             registro_marcada = True
+                            log_auditoria(request, f"Usuario realiza marcación: {nuevoregistro.id}", 1)
                             break
 
                     if not registro_marcada:

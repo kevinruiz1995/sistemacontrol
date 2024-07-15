@@ -14,7 +14,7 @@ from baseapp.models import Persona
 from administrativo.models import ConfiguracionCoordenadaMarcacion
 from administrativo.forms import ConfiguracionCoordenadaForm
 from authentication.models import CustomUser
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
 
 @login_required
@@ -55,6 +55,7 @@ def view_configuracioncoordenada(request):
                             radio=form.cleaned_data['radio'],
                         )
                         instance.save(request)
+                        log_auditoria(request, f"Adiciona configuración coordenada: {instance.id}", 1)
                         return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                     else:
                         return JsonResponse({'success': False, 'mensaje': form.errors})
@@ -78,6 +79,7 @@ def view_configuracioncoordenada(request):
                         instance.longitud = form.cleaned_data['longitud']
                         instance.radio = form.cleaned_data['radio']
                         instance.save(request)
+                        log_auditoria(request, f"Edita configuración coordenada: {instance.id}", 2)
                         return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                     else:
                         return JsonResponse({'success': False, 'mensaje': form.errors})
@@ -85,11 +87,12 @@ def view_configuracioncoordenada(request):
                 transaction.set_rollback(True)
                 return JsonResponse({'success': False})
 
-        if action == 'del':
+        if action == 'eliminar':
             try:
                 instance = ConfiguracionCoordenadaMarcacion.objects.get(id=int(request.POST['id']))
                 instance.status = False
                 instance.save(request)
+                log_auditoria(request, f"Elimina configuración coordenada: {instance.id}", 3)
                 return JsonResponse({'success': True, 'message': 'Acción realizada con exito!'})
             except Exception as ex:
                 return JsonResponse({'success': False, "errors": 'Error al eliminar jornada'})

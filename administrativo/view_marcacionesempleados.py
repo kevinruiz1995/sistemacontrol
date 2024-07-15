@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from core.core import meses
 from administrativo.models import PlantillaPersona, RegistroEntradaSalidaDiario, MOTIVO_MARCACION
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 from baseapp.funciones import add_data_aplication
 from baseapp.models import Persona
 

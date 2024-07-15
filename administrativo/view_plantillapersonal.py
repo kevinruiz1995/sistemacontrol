@@ -9,7 +9,7 @@ from baseapp.funciones import add_data_aplication
 from baseapp.models import Persona
 from administrativo.forms import PlantillaPersonalForm
 from administrativo.models import PlantillaPersona, PersonaPerfil
-from system.seguridad_sistema import control_entrada_modulos
+from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
 @login_required
 @control_entrada_modulos
@@ -54,6 +54,7 @@ def view_personal(request):
                                 perfil_persona = PersonaPerfil(persona=form.cleaned_data['persona'],
                                                               is_empleado=True)
                                 perfil_persona.save(request)
+                            log_auditoria(request, f"Adiciona empleado: {instance.id}", 1)
                             return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                         else:
                             return JsonResponse({'success': False, 'errors': form.errors})
@@ -76,6 +77,7 @@ def view_personal(request):
                             instance.area = form.cleaned_data['area']
                             instance.activo = form.cleaned_data['activo']
                             instance.save(request)
+                            log_auditoria(request, f"Edita empleado: {instance.id}", 2)
                             return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                         else:
                             return JsonResponse({'success': False, 'errors': form.errors})
@@ -88,6 +90,7 @@ def view_personal(request):
                     instance = PlantillaPersona.objects.get(id=int(request.POST['id']))
                     instance.status = False
                     instance.save(request)
+                    log_auditoria(request, f"Elimina empleado: {instance.id}", 3)
                     perfil_persona = PersonaPerfil.objects.filter(status=True, persona=instance.persona)
                     if perfil_persona.exists():
                         perfil_persona = perfil_persona.first()
@@ -109,6 +112,7 @@ def view_personal(request):
                         perfil_persona = perfil_persona.first()
                         perfil_persona.is_empleado = True if estado == 'true' else False
                         perfil_persona.save(request)
+                    log_auditoria(request, f"Actualiza estado del perfil del empleado: {instance.id}", 1)
                     return JsonResponse({'success': True, 'message': 'Estado actualizado con éxito'})
                 except PlantillaPersona.DoesNotExist:
                     return JsonResponse({'success': False, 'message': 'El registro no existe'})

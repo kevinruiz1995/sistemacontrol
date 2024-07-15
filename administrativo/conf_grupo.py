@@ -10,6 +10,7 @@ from django.template.loader import get_template
 
 from baseapp.funciones import add_data_aplication
 from administrativo.models import Persona
+from system.seguridad_sistema import log_auditoria
 
 
 @login_required(redirect_field_name='next', login_url='/login')
@@ -30,6 +31,7 @@ def view_grupo(request):
             if action == 'eliminar_grupo':
                 try:
                     with transaction.atomic():
+                        log_auditoria(request, f"Elimina grupo: {request.POST['id']}", 3)
                         registro = Group.objects.get(pk=request.POST['id'])
                         registro.delete()
                         return JsonResponse({"success": True, "mensaje": "Registro eliminado correctamente."})
@@ -49,6 +51,7 @@ def view_grupo(request):
                         name=nombre
                     )
                     registro.save()
+                    log_auditoria(request, f"Adiciona grupo: {grupo.id}", 1)
                     if not len(items) == 0:
                         for item in items:
                             registro.permissions.add(item['id'])
@@ -71,6 +74,7 @@ def view_grupo(request):
                     grupo.permissions.clear()
                     for item in items:
                         grupo.permissions.add(item['id'])
+                    log_auditoria(request, f"Edita grupo: {grupo.id}", 1)
                     return JsonResponse({"success": True, "mensaje": "Registro modificado correctamente."})
                 except Exception as ex:
                     pass
