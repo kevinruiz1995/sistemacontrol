@@ -79,9 +79,14 @@ def view_marcacionempleado(request):
             if action == 'generar_reporte':
                 try:
                     import os
+                    import datetime
+                    from datetime import datetime
                     from sistemacontrol.settings import BASE_DIR, MEDIA_ROOT
                     data['MOTIVO_MARCACION'] = MOTIVO_MARCACION
                     data['meses'] = meses
+                    data['fechaactual'] = datetime.now()
+                    protocolo_raiz = 'http://' if '127.0.0.1' in request.headers['Host'] else 'https://'
+                    data['rutaraiz'] = protocolo_raiz + request.headers['Host']
                     data['empleado'] = empleado = PlantillaPersona.objects.get(id=int(request.GET['id']))
                     filtro = (Q(status=True) & Q(empleado_id=empleado.id))
                     data['marcaciones'] = lista = RegistroEntradaSalidaDiario.objects.filter(filtro).order_by('fecha_hora__day')

@@ -147,6 +147,10 @@ class PlantillaPersona(ModeloBase):
         permiso = PermisoLaboral.objects.filter(status=True, persona=self.persona, fecha_inicio__lte=fecha, fecha_fin__gte=fecha, estado=2)
         return permiso.exists()
 
+    def get_permisoslaborales_aprobados(self):
+        permiso = PermisoLaboral.objects.filter(status=True, persona=self.persona, estado=2)
+        return permiso
+
 
 class JornadaLaboral(ModeloBase):
     nombre = models.CharField(max_length=100, blank=True, null=True)
