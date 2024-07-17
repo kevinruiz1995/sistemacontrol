@@ -107,8 +107,8 @@ def view_mispermisoslaborales(request):
             data['action'] = action = request.GET['action']
             if action == 'add':
                 try:
-                    data['titulo'] = 'Solicitud de permiso laboral'
-                    data['titulo_formulario'] = 'Formulario de solicitud permiso laboral'
+                    data['titulo'] = 'Solicitud de justificación de faltas'
+                    data['titulo_formulario'] = 'Formulario de justificación de faltas'
                     data['persona_logeado'] = persona_logeado
                     form = PermisoLaboralForm()
                     data['form'] = form

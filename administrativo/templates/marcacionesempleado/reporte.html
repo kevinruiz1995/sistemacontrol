@@ -182,27 +182,27 @@
             {% for permisolaboral in data.empleado.get_permisoslaborales_aprobados %}
                 <tr style="text-align: center;padding:10px">
                     <td class="align-middle border-bottom-0 text-center">
-                        {{ permisolaboral.motivo }}
+                        {{ permisolaboral.motivo }} 
                     </td>
                     <td class="align-middle border-bottom-0 text-center">
-                        {{ permisolaboral.fecha_inicio }}
+                        {{ permisolaboral.fecha_inicio }} 
                     </td>
                     <td class="align-middle border-bottom-0 text-center">
-                        {{ permisolaboral.fecha_fin }}
+                        {{ permisolaboral.fecha_fin }} 
                     </td>
                     <td class="align-middle border-bottom-0 text-center">
                         {% if permisolaboral.archivo %}
                             <a href="{{ data.rutaraiz }}/media/{{ permisolaboral.archivo }}" target="_blank"><i
                                     class="fa fa-pdf"></i> Descargar</a>
-                        {% endif %}
+                        {% endif %} 
                     </td>
                     <td class="align-middle border-bottom-0 text-center">
-                        {{ permisolaboral.get_estado_display }}
+                        {{ permisolaboral.get_estado_display }} 
                     </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="10"
+                    <td colspan="5"
                         class="text-uppercase text-secondary text-xxs font-weight-bolde text-center">No
                         existen registro
                     </td>
