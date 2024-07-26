@@ -30,54 +30,50 @@
 
 
 
-{% block js %}
-
-   <script>
-
-        var mask = IMask(document.getElementById('id_telefono_movil'), { mask: '00 000 0000'});
-        var mask = IMask(document.getElementById('id_telefono_convencional'), { mask: '000 000 0000'});
-    </script>
-
+{% block script %}
 
     <script>
-        var opciones = {
-            strict: true,              // va a validar siempre, aunque la cantidad de caracteres no sea 10 ni 13
-            events: "change",          // evento que va a disparar la validación
-            the_classes: "invalid",    // clase que se va a agregar al nodo en el que se realiza la validación
-            onValid: function () {
+        $(function () {
+            var opciones = {
+                strict: true,              // va a validar siempre, aunque la cantidad de caracteres no sea 10 ni 13
+                events: "change",          // evento que va a disparar la validación
+                the_classes: "invalid",    // clase que se va a agregar al nodo en el que se realiza la validación
+                onValid: function () {
 
-                if ($("#id_cedula").val().length == 10) {
-                    $.ajax({
-                        type: "GET",
-                        url: {{request.path}},
-                        dataType: "json",
-                        data: {
-                            'action': 'validar_cedula',
-                            'cedula': $("#id_cedula").val(),
-                        },
-                        success: function (data) {
-                            if (data.success === true) {
-                                mensajeDanger(data.mensaje)
-                            }
-                        },
-                        error: function () {
-                            alert("Error de conexión.");
-                        },
+                    if ($("#id_cedula").val().length == 10) {
+                        $.ajax({
+                            type: "GET",
+                            url: '{{request.path}}',
+                            dataType: "json",
+                            data: {
+                                'action': 'validar_cedula',
+                                'cedula': $("#id_cedula").val(),
+                            },
+                            success: function (data) {
+                                if (data.success === true) {
+                                    mensajeDanger(data.mensaje)
+                                }
+                            },
+                            error: function () {
+                                alert("Error de conexión.");
+                            },
 
-                    });
-                }
+                        });
+                    }
 
-            },   // callback cuando la cédula es correcta.
-            onInvalid: function () {
-                if ($("#id_cedula").val().length == 10) {
-                    mensajeWarning("cédula es incorrecta.");
+                },   // callback cuando la cédula es correcta.
+                onInvalid: function () {
+                    if ($("#id_cedula").val().length == 10) {
+                        mensajeWarning("Cédula con formato incorrecto");
 
-                }
+                    }else{
+                        mensajeWarning("Cédula con formato incorrecto");
+                    }
 
-            }  // callback cuando la cédula es incorrecta.
-        };
-
-        $("#id_cedula").validarCedulaEC(opciones);
+                }  // callback cuando la cédula es incorrecta.
+            };
+            $("#id_cedula").validarCedulaEC(opciones);
+        })
 
     </script>
 
@@ -97,33 +93,6 @@
 
         $(function () {
 
-            $('#id_email').on('blur', function () {
-                email = $("#id_email").val()
-                if (email.length > 0) {
-
-
-                    $.ajax({
-                        type: "GET",
-                        url: {{request.path}},
-                        dataType: "json",
-                        data: {
-                            'action': 'validar_email',
-                            'email': email,
-                        },
-                        success: function (data) {
-                            if (data.success === true) {
-                                mensajeDanger(data.mensaje)
-                            } else {
-
-                            }
-                        },
-                        error: function () {
-                            alert("Error de conexión.");
-                        },
-
-                    });
-                }
-            });
         });
     </script>
 

@@ -199,6 +199,15 @@ def view_persona(request):
     else:
         if 'action' in request.GET:
             action = request.GET['action']
+
+            if action == 'validar_cedula':
+                cedula = request.GET['cedula']
+                persona = Persona.objects.filter(status=True, cedula=cedula)
+                if persona.exists():
+                    return JsonResponse({"success": True, 'mensaje': 'Cédula ya existe'})
+                else:
+                    return JsonResponse({"success": False, 'mensaje': ''})
+
             if action == 'add':
                 try:
                     data['titulo'] = 'Agregar nueva persona'
