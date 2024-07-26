@@ -200,6 +200,10 @@
                                     Teléfono
                                 </th>
 
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolde text-center text-truncate">
+                                    Reconocimiento facial
+                                </th>
+
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder text-center">
                                     Acciones
                                 </th>
@@ -240,6 +244,18 @@
                                     </td>
                                     <td class="align-middle border-bottom-0 text-center">
                                         {{ personal.telefono|default:'' }}
+                                    </td>
+
+                                    <td class="align-middle border-bottom-0 text-center">
+                                        {% if personal.usuario %}
+                                            {% if personal.usuario.imagen %}
+                                                <i class="fa fa-check" style="color: green"></i>
+                                            {% else %}
+                                                <i class="fa fa-close" style="color: red"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="fa fa-close" style="color: red"></i>
+                                        {% endif %}
                                     </td>
 
                                     <td class="text-secondary text-sm font-weight-bolder text-center">
