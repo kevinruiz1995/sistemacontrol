@@ -257,10 +257,10 @@ ESTADO_PERMISO = (
 
 class PermisoLaboral(ModeloBase):
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Persona que registra permiso')
-    fecha_inicio = models.DateField(blank=True, null=True, verbose_name="Fecha de inicio del permiso")
+    fecha_inicio = models.DateField(blank=True, null=True, verbose_name="Fecha de la justificación")
     fecha_fin = models.DateField(blank=True, null=True, verbose_name="Fecha fin del permiso")
-    motivo = models.CharField(max_length=1500, verbose_name="Motivo del permiso")
-    archivo = models.FileField(upload_to='evidenciapermiso/', blank=True, null=True, verbose_name='Evidencia del permiso')
+    motivo = models.CharField(max_length=1500, verbose_name="Motivo de la justificación")
+    archivo = models.FileField(upload_to='evidenciapermiso/', blank=True, null=True, verbose_name='Evidencia de la justificación')
     estado = models.IntegerField(default=1, choices=ESTADO_PERMISO, verbose_name='Estado del permiso', blank=True, null=True)
 
     class Meta:

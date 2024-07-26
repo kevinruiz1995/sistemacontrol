@@ -43,8 +43,7 @@ def view_mispermisoslaborales(request):
                                 instance = PermisoLaboral(
                                     persona=persona_logeado,
                                     motivo=form.cleaned_data['motivo'],
-                                    fecha_inicio=form.cleaned_data['fecha_inicio'],
-                                    fecha_fin=form.cleaned_data['fecha_fin'],
+                                    fecha_inicio=form.cleaned_data['fecha_inicio']
                                 )
                                 instance.save(request)
                                 if 'archivo' in request.FILES:
@@ -73,7 +72,6 @@ def view_mispermisoslaborales(request):
                             if not permiso.exists():
                                 instance.motivo = form.cleaned_data['motivo']
                                 instance.fecha_inicio = form.cleaned_data['fecha_inicio']
-                                instance.fecha_fin = form.cleaned_data['fecha_fin']
                                 instance.save(request)
                                 if 'archivo' in request.FILES:
                                     archivo = request.FILES['archivo']
@@ -119,14 +117,13 @@ def view_mispermisoslaborales(request):
 
             if action == 'edit':
                 try:
-                    data['titulo'] = 'Editar permiso laboral'
-                    data['titulo_formulario'] = 'Formulario de editar permiso laboral'
+                    data['titulo'] = 'Editar justificación laboral'
+                    data['titulo_formulario'] = 'Formulario de editar justificación laboral'
                     data['action'] = action
-                    data['filtro'] = instance = JornadaEmpleado.objects.get(id=int(request.GET['id']))
+                    data['filtro'] = instance = PermisoLaboral.objects.get(id=int(request.GET['id']))
                     form = PermisoLaboralForm(initial={
                         'motivo': instance.motivo,
                         'fecha_inicio': instance.fecha_inicio,
-                        'fecha_fin': instance.fecha_fin,
                         'archivo': instance.archivo,
                     })
                     data['form'] = form

@@ -1,3 +1,5 @@
+import datetime
+from datetime import datetime
 from django import forms
 from administrativo.models import PlantillaPersona, Cargo, Area, JornadaLaboral, DetalleJornadaLaboral, JornadaEmpleado, \
     DatosOrganizacion, MOTIVO_MARCACION, DatosFamiliares, Genero, ConfiguracionCoordenadaMarcacion, PermisoLaboral
@@ -172,13 +174,12 @@ class PermisoLaboralForm(forms.ModelForm):
     class Meta:
         model = PermisoLaboral
         fields = [
-                    'motivo', 'fecha_inicio', 'fecha_fin', 'archivo'
+                    'motivo', 'fecha_inicio', 'archivo'
                  ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Agregar clases CSS específicas a cada campo
         self.fields['motivo'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-12', 'required': 'true', 'type': 'text', 'placeholder': 'Motivo'})
-        self.fields['fecha_inicio'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'yyyy-mm-dd', 'required':'true'})
-        self.fields['fecha_fin'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'yyyy-mm-dd', 'required':'true'})
+        self.fields['fecha_inicio'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'dd-mm-yyyy', 'required':'true', 'value': datetime.now().date()})
         self.fields['archivo'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-12'})
