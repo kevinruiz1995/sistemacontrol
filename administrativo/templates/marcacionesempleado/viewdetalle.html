@@ -31,7 +31,7 @@
                 <div class="row ">
                     <div class="col-3 d-flex align-items-start">
                         <select class="form-control" data-width="30%" name="mes" id="listadomeses">
-                            <option {% if not mes_ %}selected{% endif %} disabled value="0">Seleccione</option>
+                            <option {% if not mes_ %}selected{% endif %} disabled value="0">Seleccione el mes</option>
                             {% for mes in meses %}
                                 <option value="{{ mes.id }}"
                                         {% if mes_ == mes.id %}selected{% endif %}>{{ mes.mes }}</option>
