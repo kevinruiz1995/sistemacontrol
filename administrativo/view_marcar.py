@@ -1,6 +1,6 @@
 import base64
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseRedirect
 from django.db import transaction
@@ -137,6 +137,33 @@ def registrar_marcada(request):
                             if not detalle.motivo_entrada:
                                 transaction.set_rollback(True)
                                 return JsonResponse({'success': False, 'errors': "El detalle de la jornada no cuenta con motivo de marcación"})
+                            if detalle.motivo_entrada == 1:
+                                intervalo = 15
+                                hora_entrada = datetime.combine(datetime.today(), detalle.comienza)
+                                hora_actual = datetime.combine(datetime.today(), fechaactual.time())
+                                intervalo_minutos = 15
+                                inicio_intervalo = hora_entrada - timedelta(minutes=intervalo_minutos)
+                                fin_intervalo = hora_entrada + timedelta(minutes=intervalo_minutos)
+
+                                if inicio_intervalo <= hora_actual <= fin_intervalo:
+                                    pass
+                                else:
+                                    return JsonResponse({'success': False, 'errors': "Te encuentras fuera del horario laboral"})
+
+                            if detalle.motivo_entrada == 3:
+                                intervalo = 15
+                                hora_entrada = datetime.combine(datetime.today(), detalle.comienza)
+                                hora_actual = datetime.combine(datetime.today(), fechaactual.time())
+                                intervalo_minutos = 15
+                                inicio_intervalo = hora_entrada - timedelta(minutes=intervalo_minutos)
+                                fin_intervalo = hora_entrada + timedelta(minutes=intervalo_minutos)
+
+                                if hora_actual <= fin_intervalo:
+                                    pass
+                                else:
+                                    return JsonResponse({'success': False, 'errors': "Te encuentras fuera de la hora de almuerzo"})
+
+
                             nuevoregistro = DetalleRegistroEntradaSalida(dia=registro_diario,
                                                                          fecha_hora=fechaactual,
                                                                          ubicacion=coordenadasubicacion,
@@ -149,6 +176,33 @@ def registrar_marcada(request):
                             if not detalle.motivo_salida:
                                 transaction.set_rollback(True)
                                 return JsonResponse({'success': False, 'errors': "El detalle de la jornada no cuenta con motivo de marcación"})
+
+                            if detalle.motivo_salida == 2:
+                                intervalo = 15
+                                hora_salida = datetime.combine(datetime.today(), detalle.finaliza)
+                                hora_actual = datetime.combine(datetime.today(), fechaactual.time())
+                                intervalo_minutos = 15
+                                inicio_intervalo = hora_salida - timedelta(minutes=intervalo_minutos)
+                                fin_intervalo = hora_salida + timedelta(minutes=intervalo_minutos)
+
+                                if hora_actual >= hora_salida:
+                                    pass
+                                else:
+                                    return JsonResponse({'success': False, 'errors': "Tu horario de almuerzo comienza aún no comienza"})
+
+                            if detalle.motivo_salida == 4:
+                                intervalo = 15
+                                hora_salida = datetime.combine(datetime.today(), detalle.finaliza)
+                                hora_actual = datetime.combine(datetime.today(), fechaactual.time())
+                                intervalo_minutos = 15
+                                inicio_intervalo = hora_salida - timedelta(minutes=intervalo_minutos)
+                                fin_intervalo = hora_salida + timedelta(minutes=intervalo_minutos)
+
+                                if hora_actual >= hora_salida:
+                                    pass
+                                else:
+                                    return JsonResponse({'success': False, 'errors': "Te encuentras fuera del horario laboral"})
+
                             nuevoregistro = DetalleRegistroEntradaSalida(dia=registro_diario,
                                                                          fecha_hora=fechaactual,
                                                                          ubicacion=coordenadasubicacion,
