@@ -80,6 +80,8 @@ def editar_mibiografia(request):
         else:
             return redirect('administrativo:listar_personas')
     form.bloquear_cedula()
+    form.bloquear_nombres()
+    form.bloquear_otros()
     context = {
         'form': form,
     }
