@@ -1,3 +1,5 @@
+import datetime
+from datetime import datetime
 from django import forms
 from core.helper_form import FormBase
 from baseapp.models import Persona, Genero
@@ -27,7 +29,7 @@ class PersonaForm(forms.ModelForm):
         self.fields['ruc'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-4'})
         self.fields['direccion'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-12', 'required':'true'})
         self.fields['genero'].widget.attrs.update({'class': 'form-control', 'data-live-search':'true', 'col': 'col-md-6', 'required':'true'})
-        self.fields['fecha_nacimiento'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'dd-mm-yyyy', 'required':'true', 'placeholder': '01/01/2024'})
+        self.fields['fecha_nacimiento'].widget.attrs.update({'class': 'form-control date', 'col': 'col-md-6', 'type': 'date', 'format': 'dd-mm-yyyy', 'required':'true', 'placeholder': '01/01/2024', 'value': datetime.now().date()})
         self.fields['correo_electronico'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6', 'placeholder': 'micorreo@outlook.com'})
         self.fields['telefono'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-6'})
         self.fields['foto'].widget.attrs.update({'class': 'form-control', 'col': 'col-md-12'})
