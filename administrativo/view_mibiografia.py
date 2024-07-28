@@ -12,7 +12,43 @@ from administrativo.models import DatosFamiliares, RegistroEntradaSalidaDiario, 
 from administrativo.forms import DatosFamiliaresForm
 from baseapp.models import Persona
 from baseapp.forms import PersonaForm
+from baseapp.funciones import add_data_aplication
 from system.seguridad_sistema import control_entrada_modulos
+
+
+@login_required
+@control_entrada_modulos
+@transaction.atomic()
+def view_biografia(request):
+    global ex
+    data = {}
+    add_data_aplication(request, data)
+    usuario_logeado = request.user
+    if Persona.objects.filter(usuario=usuario_logeado, status=True).exists():
+        persona_logeado = Persona.objects.get(usuario=usuario_logeado, status=True)
+    else:
+        persona_logeado = 'SUPERUSUARIO'
+
+    if request.method == 'POST':
+        pass
+    else:
+        if 'action' in request.GET:
+            data['action'] = action = request.GET['action']
+
+            if action == 'validar_cedula':
+                cedula = request.GET['cedula']
+                filtro = (Q(status=True) & Q(cedula=cedula))
+                if 'id' in request.GET:
+                    persona = Persona.objects.filter(filtro).exclude(id=int(request.GET['id']))
+                else:
+                    persona = Persona.objects.filter(filtro)
+                if persona.exists():
+                    return JsonResponse({"success": True, 'mensaje': 'Cédula ya existe'})
+                else:
+                    return JsonResponse({"success": False, 'mensaje': ''})
+
+        else:
+            pass
 
 
 @login_required
@@ -183,6 +219,7 @@ def editar_datosfamiliares(request, id):
             return redirect('administrativo:datos_familiares')
     context = {
         'form': form,
+        'id': id,
     }
     return render(request, 'form_modal.html', context)
 

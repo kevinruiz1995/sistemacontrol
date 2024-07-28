@@ -10,7 +10,7 @@ from administrativo.organizacion import editar_organizacion
 from administrativo.view_mismarcaciones import view_mismarcaciones
 from administrativo.view_marcacionesempleados import view_marcacionempleado, listar_marcacionesempleado
 from administrativo.view_mibiografia import mibiografia, datos_familiares, crear_datosfamiliares, editar_datosfamiliares, \
-    eliminar_datosfamiliares, editar_mibiografia, mis_marcadas
+    eliminar_datosfamiliares, editar_mibiografia, mis_marcadas, view_biografia
 from administrativo.conf_acceso_modulo import view_acceso_modulo
 from administrativo.conf_grupo import view_grupo
 from administrativo.view_modulo import view_modulo
@@ -72,6 +72,7 @@ urlpatterns = [
 
     #MÓDULO MI BIOGRAFÍA
     path('mibiografia/', mibiografia, name='mibiografia'),
+    path('view_biografia/', view_biografia, name='view_biografia'),
     path('mibiografia/editar/', editar_mibiografia, name='editar_mibiografia'),
     path('datos_familiares/', datos_familiares, name='datos_familiares'),
     path('datosfamiliares/add', crear_datosfamiliares, name='crear_datosfamiliares'),

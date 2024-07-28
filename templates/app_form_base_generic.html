@@ -18,16 +18,69 @@
 {% block extra_modal_form %}
 
 {% endblock %}
+<script src="{% static 'js/ruc_jquery_validator.min.js' %}"></script>
+<script>
+    function mensajeWarning(mensaje) {
+        Swal.fire('', mensaje, 'warning')
+    }
+
+    var opciones = {
+        strict: true,              // va a validar siempre, aunque la cantidad de caracteres no sea 10 ni 13
+        events: "change",          // evento que va a disparar la validación
+        the_classes: "invalid",    // clase que se va a agregar al nodo en el que se realiza la validación
+        onValid: function () {
+
+            if ($("#id_cedula").val().length == 10) {
+                let data = {}
+                {% if id %}
+                    data = {
+                        'action': 'validar_cedula',
+                        'cedula': $("#id_cedula").val(),
+                        'id': '{{ id }}'
+                    }
+                {% else %}
+                    data = {
+                        'action': 'validar_cedula',
+                        'cedula': $("#id_cedula").val(),
+                    }
+                {% endif %}
+                $.ajax({
+                    type: "GET",
+                    url: '{% url 'administrativo:view_biografia' %}',
+                    dataType: "json",
+                    data: data,
+                    success: function (data) {
+                        if (data.success === true) {
+                            mensajeWarning(data.mensaje)
+                        }
+                    },
+                    error: function () {
+                        mensajeWarning("Error de conexión.");
+                    },
+
+                });
+            }
+
+        },   // callback cuando la cédula es correcta.
+        onInvalid: function () {
+            if ($("#id_cedula").val().length == 10) {
+                mensajeWarning("Cédula con formato incorrecto");
+
+            } else {
+                mensajeWarning("Cédula con formato incorrecto");
+            }
+
+        }  // callback cuando la cédula es incorrecta.
+    };
+
+    $("#id_cedula").validarCedulaEC(opciones);
+
+</script>
 <script>
     $(function () {
-        $('select').selectpicker();
-        flatpickr(".date", {
-            dateFormat: "Y-m-d", // Formato de fecha deseado
-            // Otras configuraciones de Flatpickr aquí
-        });
+
     })
 </script>
 {% block script_form %}
-
 {% endblock %}
 
