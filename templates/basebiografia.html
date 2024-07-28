@@ -4,31 +4,35 @@
 {% block opciones %}
 {% endblock %}
 {% block contenido %}
-    <div class="modal fade" id="formulario_modal" tabindex="-1" role="dialog" aria-labelledby="formulario_modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <form id="id_formulario_generico" class="save-modal-form-generic" autocomplete="off" method="POST" enctype="multipart/form-data">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title mb-0" id="modal-title">General</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="formulario_modal" tabindex="-1" role="dialog" aria-labelledby="formulario_modal"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <form id="id_formulario_generico" class="save-modal-form-generic" autocomplete="off" method="POST"
+                  enctype="multipart/form-data">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title mb-0" id="modal-title">General</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer justify">
+                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"> Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer justify">
-                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"> Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </div>
-        </form>
+            </form>
 
+        </div>
     </div>
-</div>
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link {% if type == 'dp' %}active{% endif %}" href="{% url 'administrativo:mibiografia' %}">Datos personales</a>
+            <a class="nav-link {% if type == 'dp' %}active{% endif %}" href="{% url 'administrativo:mibiografia' %}">Datos
+                personales</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {% if type == 'df' %}active{% endif %}" href="{% url 'administrativo:datos_familiares' %}">Datos familiares</a>
+            <a class="nav-link {% if type == 'df' %}active{% endif %}"
+               href="{% url 'administrativo:datos_familiares' %}">Datos familiares</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {% if type == 'ma' %}active{% endif %}" href="{% url 'administrativo:mis_marcadas' %}">Marcadas</a>
@@ -39,27 +43,63 @@
 {% endblock %}
 {% block script %}
     <script>
-    const formulario_modal = (url, title) => {
-        // Verificar si el usuario está autenticado
-        {% if request.user.is_authenticated %}
-            // El usuario está autenticado, cargar el formulario modal
-            $.ajax({
-                url: url,  // URL de la vista de Django
-                type: "GET",
-                success: function (data) {
-                    $("#formulario_modal #modal-title").html(title.toUpperCase());
-                    $("#id_formulario_generico").attr('action', url);
-                    $("#formulario_modal .modal-body").html(data);
-                    $("#formulario_modal").modal({backdrop: 'static'}).modal("show");
-                },
-                error: function () {
-                    toast_error("Error al cargar el formulario.");
+        const formulario_modal = (url, title) => {
+            // Verificar si el usuario está autenticado
+            {% if request.user.is_authenticated %}
+                // El usuario está autenticado, cargar el formulario modal
+                $.ajax({
+                    url: url,  // URL de la vista de Django
+                    type: "GET",
+                    success: function (data) {
+                        $("#formulario_modal #modal-title").html(title.toUpperCase());
+                        $("#id_formulario_generico").attr('action', url);
+                        $("#formulario_modal .modal-body").html(data);
+                        $("#formulario_modal").modal({backdrop: 'static'}).modal("show");
+                    },
+                    error: function () {
+                        toast_error("Error al cargar el formulario.");
+                    }
+                });
+            {% else %}
+                // El usuario no está autenticado, redirigir a la página de inicio de sesión
+                window.location.href = '{% url 'accounts:login' %}';  // Asegúrate de que esta sea la URL correcta
+            {% endif %}
+        }
+    </script>
+    <script>
+        function mensajeSuccess(mensaje) {
+            Swal.fire(
+                'Envío con éxito!',
+                mensaje,
+                'success'
+            ).then(function () {
+                location.reload();
+            });
+        }
+
+        function mensajeDanger(mensaje) {
+            Swal.fire('', mensaje, 'error')
+        }
+
+        $(document).ready(function () {
+            $(".save-modal-form-generic").submit(async function (e) {
+                e.preventDefault();  // Evita el envío del formulario por defecto
+                // Encuentra el modal padre del formulario actual
+                const $modal = $(this).closest('.modal');
+                // Realiza la solicitud AJAX y maneja la Promesa
+                const url = $(this).attr("action");
+                const formData = new FormData(this);
+                try {
+                    const response = await SendPostRequest(url, formData, true);
+                    if (response.success) {
+                        mensajeSuccess(response.message);
+                    } else {
+                        toast_error(response.errors);
+                    }
+                } catch (error) {
+                    mensajeDanger("Error en la solicitud AJAX.");
                 }
             });
-        {% else %}
-            // El usuario no está autenticado, redirigir a la página de inicio de sesión
-            window.location.href = '{% url 'accounts:login' %}';  // Asegúrate de que esta sea la URL correcta
-        {% endif %}
-    }
+        });
     </script>
 {% endblock %}
