@@ -52,6 +52,8 @@ def view_mispermisoslaborales(request):
                                     archivo._name = "evidenciapermiso_" + str(instance.id) + '_' + str(datetime.now()).replace('-', '_') + extension.lower()
                                     instance.archivo = archivo
                                     instance.save(request)
+                                else:
+                                    return JsonResponse({'success': False, 'mensaje': 'Por favor, elija un archivo'})
                                 log_auditoria(request, f"Adiciona solicitud permiso laboral: {instance.id}", 1)
                                 return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                             else:
@@ -79,6 +81,8 @@ def view_mispermisoslaborales(request):
                                     archivo._name = "evidenciapermiso_" + str(instance.id) + '_' + str(datetime.now()).replace('-', '_') + extension.lower()
                                     instance.archivo = archivo
                                     instance.save(request)
+                                else:
+                                    return JsonResponse({'success': False, 'mensaje': 'Por favor, elija un archivo'})
                                 log_auditoria(request, f"Edita solicitud permiso laboral: {instance.id}", 2)
                                 return JsonResponse({'success': True, 'mensaje': 'Acción realizada con éxito!'})
                             else:
