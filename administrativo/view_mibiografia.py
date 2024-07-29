@@ -162,6 +162,16 @@ def crear_datosfamiliares(request):
                         return JsonResponse({'success': False,
                                              'errors': 'Cédula registrada en el sistema'})
 
+                    telefono = form.cleaned_data['telefono']
+                    if telefono:
+                        if telefono.isdigit():
+                            if len(telefono) != 10:
+                                return JsonResponse({'success': False,
+                                                     'errors': 'Por favor, ingrese número telefónico válido'})
+                        else:
+                            return JsonResponse({'success': False,
+                                                 'errors': 'Por favor, ingrese número telefónico válido'})
+
                     instance = DatosFamiliares(
                         persona_id=int(request.session['idpersona']),
                         parentesco=form.cleaned_data['parentesco'],
@@ -204,17 +214,28 @@ def editar_datosfamiliares(request, id):
 
                     if not (cedula):
                         return JsonResponse({'success': False,
-                                             'mensaje': 'Ingrese identificación'})
+                                             'errors': 'Ingrese identificación'})
 
                     cedula_valida = validar_cedula(cedula)
                     if not cedula_valida:
                         return JsonResponse({'success': False,
-                                             'mensaje': 'Cédula con formato incorrecto'})
+                                             'errors': 'Cédula con formato incorrecto'})
 
                     if DatosFamiliares.objects.filter(status=True, persona_id=int(request.session['idpersona']),
                                                       cedula=cedula).exclude(id=id):
                         return JsonResponse({'success': False,
-                                             'mensaje': 'Cédula registrada en el sistema'})
+                                             'errors': 'Cédula registrada en el sistema'})
+
+                    telefono = form.cleaned_data['telefono']
+                    if telefono:
+                        if telefono.isdigit():
+                            if len(telefono) != 10:
+                                return JsonResponse({'success': False,
+                                                     'errors': 'Por favor, ingrese número telefónico válido'})
+                        else:
+                            return JsonResponse({'success': False,
+                                                 'errors': 'Por favor, ingrese número telefónico válido'})
+
                     instance.parentesco = form.cleaned_data['parentesco']
                     instance.nombres = form.cleaned_data['nombres']
                     instance.apellido1 = form.cleaned_data['apellido1']

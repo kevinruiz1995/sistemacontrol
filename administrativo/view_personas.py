@@ -73,6 +73,16 @@ def view_persona(request):
                                                    Q(ruc=ruc))).exists():
                             return JsonResponse({'success': False,
                                                  'mensaje': 'Existe persona registrada con los mismos datos ingresados!'})
+                        telefono = form.cleaned_data['telefono']
+                        if telefono:
+                            if telefono.isdigit():
+                                if len(telefono) != 10:
+                                    return JsonResponse({'success': False,
+                                                         'mensaje': 'Por favor, ingrese número telefónico válido'})
+                            else:
+                                return JsonResponse({'success': False,
+                                                     'mensaje': 'Por favor, ingrese número telefónico válido'})
+
                         instance = Persona(
                             nombres=form.cleaned_data['nombres'],
                             apellido1=form.cleaned_data['apellido1'],
@@ -159,6 +169,16 @@ def view_persona(request):
                                                           (Q(cedula=cedula) | Q(pasaporte=pasaporte) |
                                                           Q(ruc=ruc))).exclude(id=request.POST['id']).exists():
                                 return JsonResponse({'success': False, 'mensaje': 'Existe persona registrada con los mismos datos ingresados!'})
+
+                            telefono = form.cleaned_data['telefono']
+                            if telefono:
+                                if telefono.isdigit():
+                                    if len(telefono) != 10:
+                                        return JsonResponse({'success': False,
+                                                             'mensaje': 'Por favor, ingrese número telefónico válido'})
+                                else:
+                                    return JsonResponse({'success': False,
+                                                         'mensaje': 'Por favor, ingrese número telefónico válido'})
 
                             instance = Persona.objects.get(id=int(request.POST['id']))
                             instance.nombres = form.cleaned_data['nombres']
