@@ -228,7 +228,7 @@ def editar_datosfamiliares(request, id):
                     instance.save(request)
                     return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                 else:
-                    return JsonResponse({'success': False, 'errors': form.errors})
+                    return JsonResponse({'success': False, 'errors': str(form.errors.items())})
         except Exception as e:
             transaction.set_rollback(True)
             return JsonResponse({'success': False})
