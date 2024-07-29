@@ -292,10 +292,15 @@
                                     contexto.classList.add('text-muted');
                                     contexto.textContent = accion.contexto;
 
+                                    const ipuser = document.createElement('p');
+                                    contexto.classList.add('text-muted');
+                                    contexto.textContent = accion.ip;
+
                                     timelineItem.appendChild(persona);
                                     timelineItem.appendChild(tipoaccion);
                                     timelineItem.appendChild(fechaCreacion);
                                     timelineItem.appendChild(contexto);
+                                    timelineItem.appendChild(ipuser);
 
                                     timelinesContainer.appendChild(timelineItem);
                                 });

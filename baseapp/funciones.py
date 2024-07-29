@@ -3,7 +3,7 @@ import os
 from sistemacontrol import settings
 from sistemacontrol.settings import BASE_DIR
 from django.contrib.staticfiles import finders
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpRequest
 from sistemacontrol.settings import BASE_DIR
 import datetime
 from datetime import datetime
@@ -272,3 +272,15 @@ def validar_cedula(cedula):
 
     # Verificar si el dígito verificador calculado coincide con el de la cédula
     return digito_calculado == digito_verificador
+
+
+def obtener_ip_cliente(request: HttpRequest):
+    # Primero intentamos obtener la IP de 'X-Forwarded-For' si está presente
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        # 'X-Forwarded-For' puede contener una lista de IPs, tomamos la primera
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        # Si no existe 'X-Forwarded-For', tomamos 'REMOTE_ADDR'
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

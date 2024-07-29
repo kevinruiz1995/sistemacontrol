@@ -39,6 +39,7 @@ def view_auditoria(request):
                             "fecha_creacion": localtime(historial_.fecha_creacion).strftime('%Y-%m-%d %H:%M:%S.%f'),
                             "contexto": historial_.contexto,
                             "tipoaccion": historial_.get_tipoaccion_display(),
+                            "ip": historial_.ip,
                         }
                         for historial_ in historial
                     ]

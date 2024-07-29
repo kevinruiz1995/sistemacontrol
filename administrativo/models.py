@@ -291,6 +291,7 @@ class Auditoria(ModeloBase):
     modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE,blank=True, null=True, verbose_name='Módulo donde se realizó la acción')
     contexto = models.CharField(max_length=2000, verbose_name=u'Descripción de la acción que realizó el usuario')
     tipoaccion = models.IntegerField(choices=ACCIONES_AUDITORIA, blank=True, null=True, verbose_name=u'Tipo de acción que realizó el usuario')
+    ip = models.CharField(max_length=2000, blank=True, null=True, verbose_name=u'Dirección ip')
 
     class Meta:
         verbose_name = 'Auditoría'

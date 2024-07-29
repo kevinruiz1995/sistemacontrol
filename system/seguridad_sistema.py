@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from system.models import AccesoModulo, Modulo
 from administrativo.models import Auditoria
+from baseapp.funciones import obtener_ip_cliente
 
 
 
@@ -30,7 +31,8 @@ def log_auditoria(request, contexto, tipoaccion):
         modulo = Modulo.objects.filter(status=True, activo=True, url_name=url_modulo)
         if modulo.exists():
             modulo = modulo.first()
-            auditoria_ = Auditoria(usuario=request.user, modulo=modulo, contexto=contexto, tipoaccion=tipoaccion)
+            ipcliente = obtener_ip_cliente(request)
+            auditoria_ = Auditoria(usuario=request.user, modulo=modulo, contexto=contexto, tipoaccion=tipoaccion, ip=ipcliente)
             auditoria_.save(request)
     except Exception as ex:
         pass
