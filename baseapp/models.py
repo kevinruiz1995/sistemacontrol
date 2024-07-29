@@ -65,7 +65,7 @@ class Persona(ModeloBase):
         if not CustomUser.objects.filter(username=usernamevariantfinal).exclude(persona=persona).exists():
             return usernamevariantfinal
         else:
-            return calculate_username(self, variant + 1)
+            return self.calculate_username(variant + 1)
 
     def __str__(self):
         return f"{self.nombres} {self.apellido1} {self.apellido2}"
