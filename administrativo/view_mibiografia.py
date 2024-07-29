@@ -12,7 +12,7 @@ from administrativo.models import DatosFamiliares, RegistroEntradaSalidaDiario, 
 from administrativo.forms import DatosFamiliaresForm
 from baseapp.models import Persona
 from baseapp.forms import PersonaForm
-from baseapp.funciones import add_data_aplication
+from baseapp.funciones import add_data_aplication, validar_cedula
 from system.seguridad_sistema import control_entrada_modulos
 
 
@@ -146,6 +146,22 @@ def crear_datosfamiliares(request):
             with transaction.atomic():
                 form = DatosFamiliaresForm(request.POST)
                 if form.is_valid():
+
+                    cedula = form.cleaned_data['cedula']
+
+                    if not (cedula):
+                        return JsonResponse({'success': False,
+                                             'errors': 'Ingrese identificación'})
+
+                    cedula_valida = validar_cedula(cedula)
+                    if not cedula_valida:
+                        return JsonResponse({'success': False,
+                                             'errors': 'Cédula con formato incorrecto'})
+
+                    if DatosFamiliares.objects.filter(status=True, persona_id=int(request.session['idpersona']), cedula=cedula):
+                        return JsonResponse({'success': False,
+                                             'errors': 'Cédula registrada en el sistema'})
+
                     instance = DatosFamiliares(
                         persona_id=int(request.session['idpersona']),
                         parentesco=form.cleaned_data['parentesco'],
@@ -162,7 +178,7 @@ def crear_datosfamiliares(request):
                     instance.save(request)
                     return JsonResponse({'success': True, 'message': 'Acción realizada con éxito!'})
                 else:
-                    return JsonResponse({'success': False, 'errors': form.errors})
+                    return JsonResponse({'success': False, 'errors': str(form.errors.items())})
         except Exception as e:
             transaction.set_rollback(True)
             return JsonResponse({'success': False})
@@ -184,6 +200,21 @@ def editar_datosfamiliares(request, id):
             with transaction.atomic():
                 form = DatosFamiliaresForm(request.POST, instance=instance)
                 if form.is_valid():
+                    cedula = form.cleaned_data['cedula']
+
+                    if not (cedula):
+                        return JsonResponse({'success': False,
+                                             'mensaje': 'Ingrese identificación'})
+
+                    cedula_valida = validar_cedula(cedula)
+                    if not cedula_valida:
+                        return JsonResponse({'success': False,
+                                             'mensaje': 'Cédula con formato incorrecto'})
+
+                    if DatosFamiliares.objects.filter(status=True, persona_id=int(request.session['idpersona']),
+                                                      cedula=cedula).exclude(id=id):
+                        return JsonResponse({'success': False,
+                                             'mensaje': 'Cédula registrada en el sistema'})
                     instance.parentesco = form.cleaned_data['parentesco']
                     instance.nombres = form.cleaned_data['nombres']
                     instance.apellido1 = form.cleaned_data['apellido1']

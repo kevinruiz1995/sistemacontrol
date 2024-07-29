@@ -11,7 +11,7 @@ from core.utils import is_ajax
 from administrativo.forms import PlantillaPersonalForm
 from administrativo.models import PlantillaPersona, Persona, PersonaPerfil
 from baseapp.forms import PersonaForm
-from baseapp.funciones import add_data_aplication
+from baseapp.funciones import add_data_aplication, validar_cedula
 from authentication.models import CustomUser
 from system.seguridad_sistema import control_entrada_modulos, log_auditoria
 
@@ -40,6 +40,32 @@ def view_persona(request):
                         cedula = form.cleaned_data['cedula']
                         pasaporte = form.cleaned_data['pasaporte']
                         ruc = form.cleaned_data['ruc']
+                        if not(cedula) and not(pasaporte) and not(ruc):
+                            return JsonResponse({'success': False,
+                                                 'mensaje': 'Ingrese al menos una identificación'})
+
+                        if cedula:
+                            cedula_valida = validar_cedula(cedula)
+                            if not cedula_valida:
+                                return JsonResponse({'success': False,
+                                                     'mensaje': 'Cédula con formato incorrecto'})
+
+                        if cedula:
+                            if Persona.objects.filter(status=True, cedula=cedula):
+                                return JsonResponse({'success': False,
+                                                     'mensaje': 'Cédula registrada en el sistema'})
+
+                        if pasaporte:
+                            if Persona.objects.filter(status=True, pasaporte=pasaporte):
+                                return JsonResponse({'success': False,
+                                                     'mensaje': 'Pasaporte registrado en el sistema'})
+
+                        if ruc:
+                            if Persona.objects.filter(status=True, ruc=ruc):
+                                return JsonResponse({'success': False,
+                                                     'mensaje': 'Ruc registrado en el sistema'})
+
+
                         if Persona.objects.filter(Q(status=True) & Q(nombres=form.cleaned_data['nombres']) &
                                                   Q(apellido1=form.cleaned_data['apellido1']) &
                                                   Q(apellido2=form.cleaned_data['apellido2']) &
@@ -101,6 +127,32 @@ def view_persona(request):
                             cedula = form.cleaned_data['cedula']
                             pasaporte = form.cleaned_data['pasaporte']
                             ruc = form.cleaned_data['ruc']
+
+                            if not (cedula) and not (pasaporte) and not (ruc):
+                                return JsonResponse({'success': False,
+                                                     'mensaje': 'Ingrese al menos una identificación'})
+
+                            if cedula:
+                                cedula_valida = validar_cedula(cedula)
+                                if not cedula_valida:
+                                    return JsonResponse({'success': False,
+                                                         'mensaje': 'Cédula con formato incorrecto'})
+
+                            if cedula:
+                                if Persona.objects.filter(status=True, cedula=cedula).exclude(id=request.POST['id']):
+                                    return JsonResponse({'success': False,
+                                                         'mensaje': 'Cédula registrada en el sistema'})
+
+                            if pasaporte:
+                                if Persona.objects.filter(status=True, pasaporte=pasaporte).exclude(id=request.POST['id']):
+                                    return JsonResponse({'success': False,
+                                                         'mensaje': 'Pasaporte registrado en el sistema'})
+
+                            if ruc:
+                                if Persona.objects.filter(status=True, ruc=ruc).exclude(id=request.POST['id']):
+                                    return JsonResponse({'success': False,
+                                                         'mensaje': 'Ruc registrado en el sistema'})
+
                             if Persona.objects.filter(Q(status=True) & Q(nombres=form.cleaned_data['nombres']) &
                                                           Q(apellido1=form.cleaned_data['apellido1']) &
                                                           Q(apellido2=form.cleaned_data['apellido2']) &

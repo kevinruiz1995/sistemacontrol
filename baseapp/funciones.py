@@ -228,3 +228,47 @@ def act_data_aplication(request,data):
         else:
             pass
     data["lista_url_ruta"] = lista_url_ruta
+
+
+def validar_cedula(cedula):
+    # Verificar que la cédula tenga exactamente 10 dígitos
+    if len(cedula) != 10 or not cedula.isdigit():
+        return False
+
+    # Extraer el código de la provincia (primeros dos dígitos)
+    codigo_provincia = int(cedula[:2])
+    # Verificar que el código de la provincia esté en el rango permitido
+    if not (1 <= codigo_provincia <= 24 or codigo_provincia == 30):
+        return False
+
+    # Extraer el último dígito (dígito verificador)
+    digito_verificador = int(cedula[-1])
+    # Inicializar una variable para almacenar la suma de los productos
+    suma = 0
+
+    # Recorrer los primeros 9 dígitos
+    for i in range(9):
+        # Convertir el carácter a entero
+        digito = int(cedula[i])
+
+        # Los dígitos en posiciones impares se multiplican por 2
+        if i % 2 == 0:
+            producto = digito * 2
+            # Si el producto es mayor a 9, se resta 9
+            if producto > 9:
+                producto -= 9
+        else:
+            # Los dígitos en posiciones pares se multiplican por 1
+            producto = digito
+
+        # Sumar el producto a la suma total
+        suma += producto
+
+    # Calcular el residuo de la suma al dividirla por 10
+    residuo = suma % 10
+    # Si el residuo es 0, el dígito verificador debe ser 0
+    # Si el residuo es diferente de 0, se resta de 10 para obtener el dígito verificador
+    digito_calculado = 0 if residuo == 0 else 10 - residuo
+
+    # Verificar si el dígito verificador calculado coincide con el de la cédula
+    return digito_calculado == digito_verificador
