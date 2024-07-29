@@ -4,6 +4,7 @@ from django import forms
 from administrativo.models import PlantillaPersona, Cargo, Area, JornadaLaboral, DetalleJornadaLaboral, JornadaEmpleado, \
     DatosOrganizacion, MOTIVO_MARCACION, DatosFamiliares, Genero, ConfiguracionCoordenadaMarcacion, PermisoLaboral
 from core.core import DIAS_SEMANA, PARENTESCOS
+from baseapp.models import Persona
 
 class PlantillaPersonalForm(forms.ModelForm):
     class Meta:
@@ -30,6 +31,7 @@ class PlantillaPersonalForm(forms.ModelForm):
         self.fields['area'].widget.attrs.update({'class': 'form-control', 'data-live-search':'true', 'col': 'col-md-6'})
         self.fields['activo'].widget.attrs.update({'class': 'form-check-input', 'col': 'col-md-6'})
 
+        self.fields['persona'].queryset = Persona.objects.filter(status=True)
         self.fields['coordenadamarcacion'].queryset = ConfiguracionCoordenadaMarcacion.objects.filter(status=True)
         self.fields['cargo'].queryset = Cargo.objects.filter(status=True)
         self.fields['area'].queryset = Area.objects.filter(status=True)
